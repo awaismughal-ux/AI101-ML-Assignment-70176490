@@ -5,8 +5,12 @@ env/
 __pycache__/
 *.pyc
 
-# Data files (Datasets must not be committed per assignment instructions)
-data/
+# Ignore data folders except README.md
+data/*
+!data/README.md
+!**/data/README.md
+
+# Large data formats
 *.csv
 *.tsv
 *.parquet
