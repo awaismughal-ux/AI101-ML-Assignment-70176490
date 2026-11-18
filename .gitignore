@@ -1,0 +1,30 @@
+# Environment and Virtualenvs
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+
+# Data files (Datasets must not be committed per assignment instructions)
+data/
+*.csv
+*.tsv
+*.parquet
+*.jsonl
+*.gz
+*.zip
+*.tar
+*.xls
+*.xlsx
+
+# Model checkpoints and weights (> 50 MB)
+*.pt
+*.pth
+*.bin
+*.h5
+*.pkl
+*.onnx
+*.safetensors
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
