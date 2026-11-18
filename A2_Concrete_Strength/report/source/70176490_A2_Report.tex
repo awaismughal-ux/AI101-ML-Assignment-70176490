@@ -1,0 +1,144 @@
+\documentclass[conference,10pt]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\begin{document}
+
+\title{Task [A2]: Predicting Concrete Compressive Strength\\
+\large Department of Intelligent Systems, The University of Lahore -- AI-101 Introduction to AI}
+
+\author{\IEEEauthorblockN{Muhammad Awais}
+\IEEEauthorblockA{\textit{Department of Intelligent Systems} \\
+\textit{The University of Lahore}\\
+Roll No: 70176490 \quad Section: A \\
+GitHub: \url{https://github.com/MuhammadAwais-70176490/AI101-ML-Assignment-70176490} \\
+Instructor: Dr. Muhammad Awais, AI Architect}
+}
+
+\maketitle
+
+\begin{abstract}
+Evaluating concrete compressive strength requires destructive 28-day curing tests, causing costly logistical delays in construction engineering. We investigate supervised machine learning models to predict compressive strength from mix design formulations and curing age. Benchmarking Linear Regression, Polynomial Ridge Regression, Random Forest, Gradient Boosting, and Multi-Layer Perceptrons on the UCI Concrete dataset, we demonstrate that Gradient Boosting achieves state-of-the-art predictive accuracy with an RMSE of 4.44 MPa and an $R^2$ of 0.9237. Furthermore, engineering physical features—specifically the water-to-cement ratio and logarithmic curing age—reduces linear baseline error by 32.90\%, bridging the gap between empirical chemistry and statistical learning.
+\end{abstract}
+
+\section{Introduction}
+Compressive strength is the definitive measure of concrete quality and structural integrity. However, standard laboratory measurement necessitates waiting up to 28 days for moist curing, impeding rapid on-site decision-making and preventing dynamic optimization of mix designs. Supervised machine learning offers a non-destructive alternative by learning the mapping between cementitious constituents and ultimate strength. This study evaluates five inductive regression architectures on the UCI Concrete Compressive Strength dataset. Our primary finding is that tuned Gradient Boosting achieves a test RMSE of 4.44 MPa ($R^2 = 0.9237$), while feature engineering inspired by concrete hydration kinetics slashes linear baseline prediction error by 32.90\%.
+
+\section{Problem Statement}
+Given an input vector $\mathbf{x} \in \mathbb{R}^8$ representing seven mix ingredients (cement, blast-furnace slag, fly ash, water, superplasticizer, coarse aggregate, fine aggregate in $\text{kg/m}^3$) and sample curing age in days, the task is to predict the continuous compressive strength $y \in \mathbb{R}^+$ in megapascals (MPa). Success is evaluated using Root Mean Squared Error (RMSE), Mean Absolute Error (MAE), and the coefficient of determination ($R^2$). Crucial constraints include capturing severe non-linearities, accommodating heavily skewed age distributions, and preventing data leakage across folds.
+
+\section{Dataset Used}
+We use the Concrete Compressive Strength dataset (UCI ID: 165), donated by Prof. I-Cheng Yeh \cite{yeh1998}. The dataset records 1,030 experimental concrete batches prepared under controlled laboratory conditions. The eight input attributes represent mixture proportions and specimen age. All features are continuous with no missing entries. Standard z-score transformations were applied strictly within cross-validation folds.
+
+\section{Dataset Statistics}
+Table \ref{tab:dataset} outlines dataset characteristics, showing continuous ranges and partition sizes.
+
+\begin{table}[htbp]
+\caption{Dataset Statistics}
+\label{tab:dataset}
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{Property} & \textbf{Value} \\
+\midrule
+Total Samples & 1,030 \\
+Input Features (Continuous) & 8 \\
+Target Variable & Compressive Strength (MPa) \\
+Target Range & 2.33 -- 82.60 MPa \\
+Target Mean $\pm$ SD & 35.82 $\pm$ 16.71 MPa \\
+Missing Values (\%) & 0.0\% \\
+Train / Test Split Ratio & 80\% / 20\% (824 / 206) \\
+Age Skewness & +3.27 (Severe Right Skew) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\linewidth]{figures/eda_concrete_relationships.png}
+\caption{Exploratory Data Analysis: curing age distribution, logarithmic strength growth curve, and Abram's water/cement ratio inverse relationship.}
+\label{fig:eda}
+\end{figure}
+
+Exploratory analysis (Fig. \ref{fig:eda}) reveals two dominant physical phenomena: (i) hydration kinetics follow an asymptotic logarithmic curve where strength surges up to 28 days and levels off; (ii) strength is inversely proportional to the water-to-cement ratio ($r = -0.50$), corroborating Abram's Law.
+
+\section{Methodology}
+\subsection{Learning Setting}
+We frame the problem as supervised non-linear regression. Five models are benchmarked: (i) Ordinary Least Squares (OLS) as baseline; (ii) Polynomial Features with Ridge regularization; (iii) Random Forest; (iv) Gradient Boosting; and (v) an MLP Regressor (64-32 hidden neurons).
+
+\subsection{Data Split Approach}
+The data was partitioned into an 80\% train set (824 samples) and a 20\% test set (206 samples) with fixed random seed 42. Preprocessing scalers were placed inside scikit-learn `Pipeline` objects to eliminate data leakage. Model tuning was carried out using 5-fold cross-validation on the training split.
+
+\subsection{Parameter Settings}
+Grid search cross-validation identified optimal hyperparameters, as detailed in Table \ref{tab:params}.
+
+\begin{table}[htbp]
+\caption{Hyperparameter Search Space and Optimal Values}
+\label{tab:params}
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{Model} & \textbf{Search Space} & \textbf{Selected} \\
+\midrule
+Linear Reg. & Standardized OLS & Default \\
+Poly + Ridge & degree $\in \{2, 3\}$, $\alpha \in \{0.1, 1, 10, 50\}$ & degree $= 2$, $\alpha = 10.0$ \\
+Random Forest & $n \in \{50, 100, 200\}$, depth $\in \{10, 15, 20\}$ & $n = 100$, depth $= 20$ \\
+Grad. Boost & $n \in \{100, 200, 300\}$, $\eta \in \{0.03, 0.1\}$ & $n = 300$, $\eta = 0.10$ \\
+MLP Regressor & hidden $=(64, 32)$, Adam, early stopping & $(64, 32)$, ReLU \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Results and Analysis}
+\subsection{Results}
+Test-set metrics on the 206 hold-out samples are summarized in Table \ref{tab:results}.
+
+\begin{table}[htbp]
+\caption{Test-Set Regression Results. Best values in bold.}
+\label{tab:results}
+\centering
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Model} & \textbf{MAE (MPa)} & \textbf{RMSE (MPa)} & \textbf{$R^2$} & \textbf{CV RMSE (MPa)} \\
+\midrule
+Linear Baseline & 7.75 & 9.80 & 0.6276 & 10.63 $\pm$ 0.48 \\
+Poly + Ridge & 4.93 & 7.09 & 0.8047 & 6.22 $\pm$ 0.51 \\
+Random Forest & 3.78 & 5.53 & 0.8814 & 5.31 $\pm$ 0.42 \\
+\textbf{Gradient Boost} & \textbf{2.91} & \textbf{4.44} & \textbf{0.9237} & \textbf{4.83 $\pm$ 0.53} \\
+MLP Regressor & 4.64 & 5.84 & 0.8678 & 9.82 $\pm$ 4.88 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\linewidth]{figures/predicted_vs_actual_residuals.png}
+\caption{Gradient Boosting diagnostic evaluation: predicted vs. actual compressive strength ($R^2 = 0.924$) and residual error distribution.}
+\label{fig:results}
+\end{figure}
+
+\subsection{Analysis}
+\textbf{Why Linear Regression Underperforms:} The linear baseline achieves an inadequate $R^2$ of 0.6276 and RMSE of 9.80 MPa. It fundamentally violates the assumption of linearity: cement hydration is an asymptotic chemical reaction exhibiting logarithmic kinetics over time. Additionally, water and cement interact multiplicatively rather than additively.
+
+\textbf{Impact of Engineered Features:} Incorporating the water-to-cement ratio ($w/c$) and $\log(\text{age})$ reduced Linear Regression RMSE from 9.80 MPa to 6.57 MPa (a 32.90\% error reduction) and boosted $R^2$ to 0.8323. In contrast, tree ensembles experienced minor improvements (4.06\% error reduction for Gradient Boosting). Tree-based models partition input spaces via axis-aligned orthogonal cuts, inherently approximating non-linear interactions, whereas linear models require explicit basis linearization.
+
+\textbf{Error Localization and Engineering Significance:} Error slicing by curing age reveals the largest errors occur in the 8--28 day window (maximum error 19.13 MPa, mean 3.26 MPa). During this phase, tricalcium silicate undergoes intense exothermic hydration, causing volatility. Gradient Boosting feature importances confirm that age (35.52\%) and cement (30.38\%) govern over 65\% of compressive variance, followed by water (10.27\%) and slag (8.55\%). For materials engineers, this underscores that optimizing cement content and moist curing protocols provides the strongest control over concrete capacity.
+
+\section{Conclusion}
+Gradient Boosting successfully learned non-linear concrete hydration dynamics, reaching a test RMSE of 4.44 MPa and an $R^2$ of 0.9237. Domain-inspired feature engineering dramatically rehabilitated linear models, reducing error by 32.90\%. This model enables immediate strength estimation for early formwork removal and automated concrete mix proportioning.
+
+\section*{AI Use Disclosure}
+I used Google Antigravity / Gemini 3.8 to assist in setting up regression pipelines, plotting residual diagnostics, and preparing LaTeX documentation. All numerical results, code, and figures were executed and validated by me.
+
+\begin{thebibliography}{00}
+\bibitem{yeh1998} I.-C. Yeh, ``Modeling of strength of high-performance concrete using artificial neural networks,'' \textit{Cement and Concrete Research}, vol. 28, no. 12, pp. 1797--1808, 1998.
+\bibitem{scikit-learn} F. Pedregosa \textit{et al.}, ``Scikit-learn: Machine Learning in Python,'' \textit{Journal of Machine Learning Research}, vol. 12, pp. 2825--2830, 2011.
+\end{thebibliography}
+
+\end{document}
