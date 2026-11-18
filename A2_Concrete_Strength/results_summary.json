@@ -1,0 +1,142 @@
+{
+  "dataset_stats": {
+    "samples": 1030,
+    "features": 8,
+    "target_range": "2.33 - 82.60 MPa",
+    "target_mean_std": "35.82 \u00b1 16.71 MPa",
+    "missing_pct": 0.0,
+    "train_samples": 824,
+    "test_samples": 206,
+    "age_skew": 3.26917740063459
+  },
+  "hyperparameters": {
+    "Linear Regression (Baseline)": {
+      "search_space": "None (OLS)",
+      "selected": "Standardized OLS"
+    },
+    "Polynomial + Ridge Regression": {
+      "search_space": "degree \u2208 {2, 3}, \u03b1 \u2208 {0.1, 1, 10, 50, 100}",
+      "selected": "degree=3, \u03b1=1.0"
+    },
+    "Random Forest": {
+      "search_space": "n_est \u2208 {50, 100, 200}, max_depth \u2208 {10, 15, 20, None}",
+      "selected": "n_est=200, max_depth=None"
+    },
+    "Gradient Boosting": {
+      "search_space": "n_est \u2208 {100, 200, 300}, lr \u2208 {0.03, 0.05, 0.1}, depth \u2208 {3, 4, 5}",
+      "selected": "n_est=300, lr=0.1, depth=4"
+    },
+    "MLP Regressor (Neural Net)": {
+      "search_space": "layers=(64, 32), Adam, early_stopping=True",
+      "selected": "layers=(64, 32), ReLU, Adam"
+    }
+  },
+  "test_results": [
+    {
+      "Model": "Linear Regression (Baseline)",
+      "MAE (MPa)": 7.7455592439214325,
+      "RMSE (MPa)": 9.796475901624358,
+      "R2 Score": 0.627553179231485,
+      "CV RMSE (mean\u00b1std)": "10.627 \u00b1 0.477"
+    },
+    {
+      "Model": "Polynomial + Ridge Regression",
+      "MAE (MPa)": 4.929739305623001,
+      "RMSE (MPa)": 7.093473525894831,
+      "R2 Score": 0.8047268972761186,
+      "CV RMSE (mean\u00b1std)": "6.222 \u00b1 0.514"
+    },
+    {
+      "Model": "Random Forest",
+      "MAE (MPa)": 3.7813524702380987,
+      "RMSE (MPa)": 5.52756835424804,
+      "R2 Score": 0.8814251002737991,
+      "CV RMSE (mean\u00b1std)": "5.311 \u00b1 0.419"
+    },
+    {
+      "Model": "Gradient Boosting",
+      "MAE (MPa)": 2.9122685247936446,
+      "RMSE (MPa)": 4.4354534963406556,
+      "R2 Score": 0.9236514870034683,
+      "CV RMSE (mean\u00b1std)": "4.827 \u00b1 0.532"
+    },
+    {
+      "Model": "MLP Regressor (Neural Net)",
+      "MAE (MPa)": 4.639592271862547,
+      "RMSE (MPa)": 5.836405171407326,
+      "R2 Score": 0.8678048902715864,
+      "CV RMSE (mean\u00b1std)": "9.818 \u00b1 4.879"
+    }
+  ],
+  "best_model": "Gradient Boosting",
+  "feature_engineering": [
+    {
+      "Model": "Linear Regression",
+      "Raw RMSE (MPa)": 9.796475901624358,
+      "Eng RMSE (MPa)": 6.573016499765264,
+      "RMSE \u0394 (%)": -32.904275315214235,
+      "Raw R2": 0.627553179231485,
+      "Eng R2": 0.832330539325439
+    },
+    {
+      "Model": "Ridge (tuned \u03b1)",
+      "Raw RMSE (MPa)": 9.796178196607416,
+      "Eng RMSE (MPa)": 6.573969098451486,
+      "RMSE \u0394 (%)": -32.89251209488855,
+      "Raw R2": 0.6275758154536216,
+      "Eng R2": 0.8322819365927819
+    },
+    {
+      "Model": "Random Forest (tuned)",
+      "Raw RMSE (MPa)": 5.5284389400617595,
+      "Eng RMSE (MPa)": 5.3919925156944055,
+      "RMSE \u0394 (%)": -2.4680823257103697,
+      "Raw R2": 0.8813877465051168,
+      "Eng R2": 0.8871703908061073
+    },
+    {
+      "Model": "Gradient Boosting (tuned)",
+      "Raw RMSE (MPa)": 4.435574756011654,
+      "Eng RMSE (MPa)": 4.255437544892674,
+      "RMSE \u0394 (%)": -4.06119208958964,
+      "Raw R2": 0.9236473124034524,
+      "Eng R2": 0.9297230403865695
+    }
+  ],
+  "feature_importances": {
+    "age": 0.35522584500001686,
+    "cement": 0.3037938291160558,
+    "water": 0.10270790548500802,
+    "slag": 0.08554656275566741,
+    "superplastic": 0.07901381261484886,
+    "fineagg": 0.03679162136759033,
+    "coarseagg": 0.021793264709565264,
+    "ash": 0.015127158951247577
+  },
+  "cohort_errors": {
+    "count": {
+      "Young (\u22647d)": 56,
+      "Standard (8-28d)": 91,
+      "Mature (29-90d)": 29,
+      "Aged (>90d)": 30
+    },
+    "mean": {
+      "Young (\u22647d)": 2.9056572037910304,
+      "Standard (8-28d)": 3.2645592035645308,
+      "Mature (29-90d)": 2.437568219185217,
+      "Aged (>90d)": 2.31487156048165
+    },
+    "median": {
+      "Young (\u22647d)": 1.7067725739041926,
+      "Standard (8-28d)": 1.7349707529969365,
+      "Mature (29-90d)": 1.7763344740570943,
+      "Aged (>90d)": 1.6133255643208635
+    },
+    "max": {
+      "Young (\u22647d)": 13.864076724910177,
+      "Standard (8-28d)": 19.134331550305617,
+      "Mature (29-90d)": 8.555767846822512,
+      "Aged (>90d)": 11.32404354717518
+    }
+  }
+}
