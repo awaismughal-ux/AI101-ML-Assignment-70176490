@@ -1,0 +1,134 @@
+{
+  "dataset_stats": {
+    "samples_total": 569,
+    "malignant_samples": 212,
+    "benign_samples": 357,
+    "features": 30,
+    "missing_values_pct": 0.0,
+    "train_samples": 455,
+    "test_samples": 114,
+    "high_corr_count": 21
+  },
+  "hyperparameters": {
+    "Logistic Regression (Baseline)": {
+      "search_space": "C \u2208 {0.01, 0.1, 1.0, 10.0, 100.0}, penalty='l2'",
+      "selected": "C=1.0",
+      "cv_roc_auc": 0.9957688338493291
+    },
+    "Support Vector Machine (RBF)": {
+      "search_space": "C \u2208 {0.1, 1, 10, 100}, \u03b3 \u2208 {scale, auto, 0.01, 0.1}",
+      "selected": "C=10.0, \u03b3=0.01",
+      "cv_roc_auc": 0.9953560371517028
+    },
+    "Random Forest": {
+      "search_space": "n_est \u2208 {50, 100, 200}, max_depth \u2208 {3, 5, 8, None}",
+      "selected": "n_est=50, max_depth=None",
+      "cv_roc_auc": 0.9894736842105264
+    },
+    "Gradient Boosting": {
+      "search_space": "n_est \u2208 {50, 100, 150}, lr \u2208 {0.01, 0.05, 0.1}",
+      "selected": "n_est=150, lr=0.1",
+      "cv_roc_auc": 0.9923632610939113
+    }
+  },
+  "test_results": [
+    {
+      "Model": "Logistic Regression (Baseline)",
+      "Accuracy": 0.9649122807017544,
+      "Precision": 0.975,
+      "Recall": 0.9285714285714286,
+      "F1 (Malignant)": 0.9512195121951219,
+      "ROC-AUC": 0.996031746031746,
+      "CV ROC-AUC (mean\u00b1std)": "0.9958 \u00b1 0.0047"
+    },
+    {
+      "Model": "Support Vector Machine (RBF)",
+      "Accuracy": 0.9824561403508771,
+      "Precision": 1.0,
+      "Recall": 0.9523809523809523,
+      "F1 (Malignant)": 0.975609756097561,
+      "ROC-AUC": 0.996031746031746,
+      "CV ROC-AUC (mean\u00b1std)": "0.9954 \u00b1 0.0053"
+    },
+    {
+      "Model": "Random Forest",
+      "Accuracy": 0.9736842105263158,
+      "Precision": 1.0,
+      "Recall": 0.9285714285714286,
+      "F1 (Malignant)": 0.9629629629629629,
+      "ROC-AUC": 0.9940476190476191,
+      "CV ROC-AUC (mean\u00b1std)": "0.9895 \u00b1 0.0060"
+    },
+    {
+      "Model": "Gradient Boosting",
+      "Accuracy": 0.9649122807017544,
+      "Precision": 1.0,
+      "Recall": 0.9047619047619048,
+      "F1 (Malignant)": 0.95,
+      "ROC-AUC": 0.9917328042328043,
+      "CV ROC-AUC (mean\u00b1std)": "0.9924 \u00b1 0.0058"
+    }
+  ],
+  "best_model": "Logistic Regression (Baseline)",
+  "threshold_study": {
+    "t_default": 0.5,
+    "rec_default": 0.9285714285714286,
+    "prec_default": 0.975,
+    "f1_default": 0.9512195121951219,
+    "cm_default": [
+      [
+        71,
+        1
+      ],
+      [
+        3,
+        39
+      ]
+    ],
+    "t_tuned": 0.4851515151515151,
+    "rec_tuned": 0.9523809523809523,
+    "prec_tuned": 0.975609756097561,
+    "f1_tuned": 0.963855421686747,
+    "precision_cost_pct": -0.060975609756097615,
+    "cm_tuned": [
+      [
+        71,
+        1
+      ],
+      [
+        2,
+        40
+      ]
+    ]
+  },
+  "ablation": {
+    "Full Features (30)": {
+      "Accuracy": 0.9649122807017544,
+      "Recall": 0.9285714285714286,
+      "Precision": 0.975,
+      "F1": 0.9512195121951219,
+      "ROC-AUC": 0.996031746031746
+    },
+    "Dropped High-Corr (10 dropped, 20 kept)": {
+      "Accuracy": 0.9736842105263158,
+      "Recall": 0.9285714285714286,
+      "Precision": 1.0,
+      "F1": 0.9629629629629629,
+      "ROC-AUC": 0.9943783068783069
+    }
+  },
+  "top_positive_features": {
+    "worst concavity": 0.9114058021854964,
+    "mean concave points": 0.9528128318119832,
+    "worst symmetry": 1.0612636621709484,
+    "radius error": 1.2333251663808182,
+    "worst texture": 1.4340931710338387
+  },
+  "top_negative_features": {
+    "compactness error": -0.906924802419264,
+    "fractal dimension error": -0.5938763200364324,
+    "mean compactness": -0.4395461480874432,
+    "texture error": -0.40761125826206496,
+    "symmetry error": -0.3306577340565415
+  }
+}
