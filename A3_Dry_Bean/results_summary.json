@@ -1,0 +1,194 @@
+{
+  "dataset_stats": {
+    "samples": 13611,
+    "features": 16,
+    "classes": [
+      "BARBUNYA",
+      "BOMBAY",
+      "CALI",
+      "DERMASON",
+      "HOROZ",
+      "SEKER",
+      "SIRA"
+    ],
+    "class_distribution": {
+      "DERMASON": 3546,
+      "SIRA": 2636,
+      "SEKER": 2027,
+      "HOROZ": 1928,
+      "CALI": 1630,
+      "BARBUNYA": 1322,
+      "BOMBAY": 522
+    },
+    "missing_pct": 0.0,
+    "train_samples": 9527,
+    "val_samples": 2042,
+    "test_samples": 2042
+  },
+  "imbalance_study": {
+    "unweighted_acc": 0.9236043095004897,
+    "unweighted_macro_f1": 0.9366008123584747,
+    "balanced_acc": 0.9196865817825661,
+    "balanced_macro_f1": 0.934274381181452
+  },
+  "test_results": [
+    {
+      "Model": "Multinomial Logistic Regression",
+      "Accuracy": 0.9123408423114594,
+      "Macro-F1": 0.9274773682904449,
+      "Weighted-F1": 0.9126271467142673
+    },
+    {
+      "Model": "SVM (RBF Kernel)",
+      "Accuracy": 0.9255631733594515,
+      "Macro-F1": 0.9359972219375542,
+      "Weighted-F1": 0.9255893202201628
+    },
+    {
+      "Model": "Random Forest Classifier",
+      "Accuracy": 0.920666013712047,
+      "Macro-F1": 0.9319190769066881,
+      "Weighted-F1": 0.920647075384791
+    },
+    {
+      "Model": "MLP Classifier (Neural Net)",
+      "Accuracy": 0.9221351616062684,
+      "Macro-F1": 0.933794592194986,
+      "Weighted-F1": 0.922086104087098
+    }
+  ],
+  "best_model": "SVM (RBF Kernel)",
+  "per_class_metrics": {
+    "precision": {
+      "BARBUNYA": 0.927461139896373,
+      "BOMBAY": 1.0,
+      "CALI": 0.9271255060728745,
+      "DERMASON": 0.9242424242424242,
+      "HOROZ": 0.9556313993174061,
+      "SEKER": 0.9536423841059603,
+      "SIRA": 0.8678304239401496
+    },
+    "recall": {
+      "BARBUNYA": 0.8994974874371859,
+      "BOMBAY": 1.0,
+      "CALI": 0.9346938775510204,
+      "DERMASON": 0.9172932330827067,
+      "HOROZ": 0.9688581314878892,
+      "SEKER": 0.9473684210526315,
+      "SIRA": 0.8810126582278481
+    },
+    "f1-score": {
+      "BARBUNYA": 0.9132653061224489,
+      "BOMBAY": 1.0,
+      "CALI": 0.9308943089430894,
+      "DERMASON": 0.9207547169811321,
+      "HOROZ": 0.9621993127147767,
+      "SEKER": 0.9504950495049505,
+      "SIRA": 0.8743718592964824
+    },
+    "support": {
+      "BARBUNYA": 199.0,
+      "BOMBAY": 78.0,
+      "CALI": 245.0,
+      "DERMASON": 532.0,
+      "HOROZ": 289.0,
+      "SEKER": 304.0,
+      "SIRA": 395.0
+    }
+  },
+  "pca_study": [
+    {
+      "k": 2,
+      "Macro-F1": 0.8732154144708529,
+      "Accuracy": 0.8746327130264446,
+      "Variance Explained (%)": 81.88984583692087,
+      "Retained F1 (%)": 93.2925220294201
+    },
+    {
+      "k": 4,
+      "Macro-F1": 0.8986718977988823,
+      "Accuracy": 0.8952007835455436,
+      "Variance Explained (%)": 95.08721270881732,
+      "Retained F1 (%)": 96.0122398588527
+    },
+    {
+      "k": 8,
+      "Macro-F1": 0.9359972219375542,
+      "Accuracy": 0.9255631733594515,
+      "Variance Explained (%)": 99.93124472254843,
+      "Retained F1 (%)": 100.0
+    },
+    {
+      "k": 16,
+      "Macro-F1": 0.9359972219375542,
+      "Accuracy": 0.9255631733594515,
+      "Variance Explained (%)": 100.0,
+      "Retained F1 (%)": 100.0
+    }
+  ],
+  "confusion_matrix": [
+    [
+      179,
+      0,
+      13,
+      0,
+      0,
+      4,
+      3
+    ],
+    [
+      0,
+      78,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      9,
+      0,
+      229,
+      0,
+      5,
+      1,
+      1
+    ],
+    [
+      0,
+      0,
+      0,
+      488,
+      0,
+      4,
+      40
+    ],
+    [
+      0,
+      0,
+      5,
+      2,
+      280,
+      0,
+      2
+    ],
+    [
+      3,
+      0,
+      0,
+      6,
+      0,
+      288,
+      7
+    ],
+    [
+      2,
+      0,
+      0,
+      32,
+      8,
+      5,
+      348
+    ]
+  ]
+}
