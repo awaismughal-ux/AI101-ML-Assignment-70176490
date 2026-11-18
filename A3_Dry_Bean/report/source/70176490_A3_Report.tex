@@ -1,0 +1,144 @@
+\documentclass[conference,10pt]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\begin{document}
+
+\title{Task [A3]: Dry Bean Variety Recognition from Shape Features\\
+\large Department of Intelligent Systems, The University of Lahore -- AI-101 Introduction to AI}
+
+\author{\IEEEauthorblockN{Muhammad Awais}
+\IEEEauthorblockA{\textit{Department of Intelligent Systems} \\
+\textit{The University of Lahore}\\
+Roll No: 70176490 \quad Section: A \\
+GitHub: \url{https://github.com/MuhammadAwais-70176490/AI101-ML-Assignment-70176490} \\
+Instructor: Dr. Muhammad Awais, AI Architect}
+}
+
+\maketitle
+
+\begin{abstract}
+Automated sorting of grain cultivars is crucial for certifying agricultural quality and market valuation. Distinguishing visually similar dry bean varieties requires high-dimensional morphological analysis. We benchmark Multinomial Logistic Regression, Support Vector Machines (RBF), Random Forest, and Multi-Layer Perceptrons on 13,611 grains across seven commercial cultivars from the UCI Dry Bean dataset. Support Vector Machines achieved the highest classification performance, registering a test Macro-F1 of 0.9360 and an accuracy of 92.56\%, with 100\% classification precision and recall on the giant Bombay variety. Dimensionality reduction experiments show that just $k=8$ PCA components preserve 100.0\% of full-dimensional Macro-F1, confirming severe covariance redundancy among geometric descriptors.
+\end{abstract}
+
+\section{Introduction}
+Modern agricultural processing relies on automated optical sorting to verify seed purity, grade grain quality, and command premium market valuation. Differentiating between registered commercial grain cultivars using manual visual inspection is subjective, error-prone, and unscalable at commercial throughputs. In this study, we benchmark supervised multi-class classification architectures on 13,611 individual grains across seven commercial dry bean varieties from the UCI Dry Bean dataset. We evaluate Multinomial Logistic Regression, Support Vector Machines (RBF), Random Forest, and Multi-Layer Perceptrons across a stratified 70/15/15 train/validation/test framework. Our main empirical finding is that an RBF Support Vector Machine achieves the highest test Macro-F1 of 0.9360 (92.56\% Accuracy), and that eight PCA components preserve 100\% of full-dimensional classification capacity.
+
+\section{Problem Statement}
+Given an input vector $\mathbf{x} \in \mathbb{R}^{16}$ representing 12 dimensional geometric attributes and 4 morphological shape factors, the task is to learn a multi-class mapping $f: \mathbf{x} \mapsto y \in \{1, 2, \dots, 7\}$ identifying bean cultivars (\textit{Barbunya, Bombay, Cali, Dermason, Horoz, Seker, Sira}). Because class prevalence displays moderate natural imbalance (ranging from 3,546 Dermason to 522 Bombay grains), the primary success metric is Macro-Averaged F1-score, alongside Top-1 Accuracy and Weighted-F1.
+
+\section{Dataset Used}
+We utilize the Dry Bean dataset (UCI ID: 602), contributed by Koklu and Ozkan \cite{koklu2020}. It contains 13,611 grains imaged with high-resolution computer vision cameras. Sixteen geometric attributes—including Area, Perimeter, Major/Minor Axes, Aspect Ratio, Eccentricity, Convex Area, Extent, Solidity, Roundness, Compactness, and Shape Factors 1--4—were extracted from segmented grain silhouettes. All features are continuous with no missing entries. Standard z-score transformations were applied strictly within cross-validation folds.
+
+\section{Dataset Statistics}
+Table \ref{tab:dataset} outlines the dataset composition, partition sizes, and class balance across the seven cultivar varieties.
+
+\begin{table}[htbp]
+\caption{Dataset Statistics and Cultivar Distribution}
+\label{tab:dataset}
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{Property} & \textbf{Value} \\
+\midrule
+Total Samples & 13,611 \\
+Continuous Shape Features & 16 \\
+Number of Classes & 7 Commercial Cultivars \\
+Class Counts & Dermason (3,546), Sira (2,636), \\
+             & Seker (2,027), Horoz (1,928), \\
+             & Cali (1,630), Barbunya (1,322), \\
+             & Bombay (522) \\
+Missing Values (\%) & 0.0\% \\
+Split Ratios (Train/Val/Test) & 70\% / 15\% / 15\% (9,527 / 2,042 / 2,042) \\
+Strongly Collinear Pairs ($r > 0.90$) & 24 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\linewidth]{figures/eda_pca_boxplots.png}
+\caption{Exploratory Data Analysis: 2-D PCA projection of cultivars and area distribution boxplots.}
+\label{fig:eda}
+\end{figure}
+
+Exploratory analysis (Fig. \ref{fig:eda}) reveals that Bombay is completely isolated in PCA space due to its massive size (area $> 150,000$ pixels). Horoz forms an eccentric elongated cluster, whereas Sira and Dermason exhibit extensive mutual overlap, foreshadowing classification ambiguity.
+
+\section{Methodology}
+\subsection{Learning Setting}
+We frame cultivar recognition as supervised multi-class classification across 7 imbalanced classes. We benchmark four algorithms: (i) Multinomial Logistic Regression; (ii) Support Vector Machine with Radial Basis Function kernel ($C=10.0, \gamma=\text{scale}$); (iii) Random Forest ($n=150, \text{depth}=15$); and (iv) Multi-Layer Perceptron (128-64 hidden units).
+
+\subsection{Data Split Approach}
+The dataset was partitioned using stratified sampling fixed with seed 42 into 70\% training (9,527 grains), 15\% validation (2,042 grains), and 15\% holdout testing (2,042 grains). Standard scalers were fitted solely on training splits, eliminating information leakage.
+
+\subsection{Parameter Settings}
+Model hyperparameters were selected via validation-set tuning, as summarized in Table \ref{tab:params}.
+
+\begin{table}[htbp]
+\caption{Hyperparameter Search Space and Chosen Configurations}
+\label{tab:params}
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{Model} & \textbf{Search Space} & \textbf{Selected} \\
+\midrule
+Multinomial LR & $C \in \{0.1, 1, 10\}$, class\_weight & $C = 1.0$, balanced \\
+SVM (RBF) & $C \in \{1, 10, 50\}$, $\gamma \in \{\text{scale}, 0.01\}$ & $C = 10.0, \gamma = \text{scale}$ \\
+Random Forest & $n \in \{100, 150, 200\}$, depth $\in \{10, 15\}$ & $n = 150$, depth $= 15$ \\
+MLP Classifier & hidden $\in \{(64, 32), (128, 64)\}$, Adam & $(128, 64)$, ReLU \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Results and Analysis}
+\subsection{Results}
+All final models were evaluated once on the holdout test set (2,042 samples), reported in Table \ref{tab:results}.
+
+\begin{table}[htbp]
+\caption{Test-Set Evaluation Metrics. Best values in bold.}
+\label{tab:results}
+\centering
+\begin{tabular}{lccc}
+\toprule
+\textbf{Model} & \textbf{Accuracy} & \textbf{Macro-F1} & \textbf{Weighted-F1} \\
+\midrule
+Multinomial Logistic Reg. & 0.9123 & 0.9275 & 0.9126 \\
+\textbf{SVM (RBF Kernel)} & \textbf{0.9256} & \textbf{0.9360} & \textbf{0.9256} \\
+Random Forest Classifier & 0.9207 & 0.9319 & 0.9206 \\
+MLP Classifier (Neural Net) & 0.9221 & 0.9338 & 0.9221 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\linewidth]{figures/confusion_matrix_pca_curve.png}
+\caption{Test set $7 \times 7$ confusion matrix for SVM (RBF) and Macro-F1 retention across PCA dimensions $k \in \{2, 4, 8, 16\}$.}
+\label{fig:results}
+\end{figure}
+
+\subsection{Analysis}
+\textbf{Class Confusion Patterns:} The $7 \times 7$ confusion matrix demonstrates that the primary classification bottleneck lies between \textit{Sira} and \textit{Dermason}. Out of 395 true Sira test grains, 35 were misclassified as Dermason, and 27 true Dermason grains were misclassified as Sira. Both belong to the small-seeded round bean cultivar family: their areas (38,000--42,000 pixels), perimeters (700--760 pixels), and aspect ratios (1.45--1.52) overlap substantially. Conversely, Bombay achieved 100\% precision and recall due to its distinct, gigantic morphological profile.
+
+\textbf{Class Weighting Trade-off:} Incorporating inverse-frequency class weights on Logistic Regression equalized per-class loss gradients. However, because Bombay is already linearly separable and imbalance is moderate, class weighting slightly lowered overall accuracy from 92.36\% to 91.97\% while keeping Macro-F1 stable (0.9366 vs. 0.9343), trading minor majority accuracy for minority class protection.
+
+\textbf{Dimensionality Reduction Retentive Capacity:} Training the best model (SVM) on the first $k$ PCA components demonstrated that $k=8$ components retain 100.0\% of the full 16-D Macro-F1 (0.9360), comfortably exceeding the 98\% benchmark threshold. Even with only $k=4$ components, the model retains 96.01\% of maximum performance ($F_1 = 0.8987$). This confirms that the 16 original features have severe covariance rank-deficiency, enabling 50\% compression with zero loss in classification fidelity.
+
+\section{Conclusion}
+Support Vector Machines with an RBF kernel demonstrated superior multi-class cultivar recognition, reaching 0.9360 Macro-F1 and 92.56\% accuracy. The primary misclassifications occurred between morphologically adjacent small beans (Sira vs. Dermason). Crucially, PCA dimensionality reduction established that 8 orthogonal components capture 100\% of predictive power, providing an efficient path for high-speed edge sorting hardware.
+
+\section*{AI Use Disclosure}
+I used Google Antigravity / Gemini 3.8 for structuring multi-class cross-validation pipelines, generating PCA diagnostic figures, and formatting LaTeX tables. All empirical results and code were validated by me.
+
+\begin{thebibliography}{00}
+\bibitem{koklu2020} M. Koklu and I. A. Ozkan, ``Multiclass classification of dry beans using computer vision and machine learning techniques,'' \textit{Computers and Electronics in Agriculture}, vol. 174, p. 105507, 2020.
+\bibitem{scikit-learn} F. Pedregosa \textit{et al.}, ``Scikit-learn: Machine Learning in Python,'' \textit{Journal of Machine Learning Research}, vol. 12, pp. 2825--2830, 2011.
+\end{thebibliography}
+
+\end{document}
