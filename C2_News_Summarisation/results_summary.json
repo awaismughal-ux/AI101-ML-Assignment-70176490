@@ -1,0 +1,137 @@
+{
+  "task": "C2_News_Summarisation",
+  "dataset": "BBC XSum",
+  "corpus_statistics": {
+    "doc_mean_len": 386.6,
+    "doc_median_len": 308.5,
+    "doc_p95_len": 961.1,
+    "sum_mean_len": 21.7,
+    "sum_median_len": 21.0,
+    "sum_p95_len": 30.0,
+    "compression_ratio_mean": 18.49,
+    "compression_ratio_median": 14.35,
+    "novel_unigram_pct": 37.8,
+    "novel_bigram_pct": 83.16,
+    "novel_trigram_pct": 95.43,
+    "novel_4gram_pct": 98.4
+  },
+  "training_history": {
+    "train_losses": [
+      7.8099,
+      6.6528,
+      6.4806
+    ],
+    "val_losses": [
+      6.7562,
+      6.6806,
+      6.6932
+    ]
+  },
+  "metrics": {
+    "lead1": {
+      "ROUGE-1": 17.57,
+      "ROUGE-2": 1.99,
+      "ROUGE-L": 13.19,
+      "mean_len": 23.2
+    },
+    "model1_greedy": {
+      "ROUGE-1": 2.94,
+      "ROUGE-2": 0.0,
+      "ROUGE-L": 2.94,
+      "mean_len": 25.0
+    },
+    "model1_beam": {
+      "ROUGE-1": 2.94,
+      "ROUGE-2": 0.0,
+      "ROUGE-L": 2.94,
+      "mean_len": 25.0
+    },
+    "model2_t5": {
+      "ROUGE-1": 17.93,
+      "ROUGE-2": 1.7,
+      "ROUGE-L": 12.54,
+      "mean_len": 26.7
+    }
+  },
+  "novel_bigrams": {
+    "Reference": 83.16,
+    "Lead-1": 0.0,
+    "Model 1 (Greedy)": 100.0,
+    "Model 1 (Beam)": 100.0,
+    "Model 2 (T5-Small)": 12.15
+  },
+  "hallucination_analysis": {
+    "audited_samples": 20,
+    "hallucinated_count": 1,
+    "hallucination_rate_pct": 5.0,
+    "records": [
+      {
+        "index": 0,
+        "generated_summary": "president vowed \"strong and swift economic actions\" if he held the poll. he called the sanctions \"illegal, insolent and unprecedented\"",
+        "unsupported_keywords": [],
+        "is_hallucinated": false
+      },
+      {
+        "index": 1,
+        "generated_summary": "the 68-year-old former scrum half won 53 caps for Wales from 1967 to 1978. he also won 10 caps for the British Lions' winning series in new Zealand",
+        "unsupported_keywords": [],
+        "is_hallucinated": false
+      },
+      {
+        "index": 2,
+        "generated_summary": "Emmanuel Manzi from italy won the event at Llanberis, while Richard Roberts was the first Welsh competitor to finish. the 10-mile (16km) race attracts",
+        "unsupported_keywords": [],
+        "is_hallucinated": false
+      },
+      {
+        "index": 3,
+        "generated_summary": "Rajab was convicted in 2012 of taking part in illegal gatherings and disturbing public order. an appeals court reduced his original three-year term by a year. ",
+        "unsupported_keywords": [],
+        "is_hallucinated": false
+      },
+      {
+        "index": 4,
+        "generated_summary": "more than 600 child migrants arrived in the uk without their parents last month alone.",
+        "unsupported_keywords": [],
+        "is_hallucinated": false
+      }
+    ]
+  },
+  "qualitative_examples": [
+    {
+      "article_snippet": "The sanctions freeze the US assets of those affected, and stop US entities from doing business with them.\nThose targeted include the interior minister and the head of the army.\nLast week, President Donald Trump vowed \"strong and swift economic action...",
+      "reference_summary": "The US government has imposed sanctions on 13 senior Venezuelan officials as pressure mounts on President Nicol\u00e1s Maduro ahead of a controversial vote for a new constituent assembly.",
+      "lead1_summary": "The sanctions freeze the US assets of those affected, and stop US entities from doing business with them.",
+      "model1_beam_summary": "a <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk>",
+      "t5_small_summary": "president vowed \"strong and swift economic actions\" if he held the poll. he called the sanctions \"illegal, insolent and unprecedented\""
+    },
+    {
+      "article_snippet": "Sir Gareth attended a ceremony at Windsor Castle on Thursday, after being named in the Queen's Birthday Honours list in June.\nThe 68-year-old former scrum half won 53 caps for Wales from 1967 to 1978.\nHe also won 10 caps for the British Lions' winnin...",
+      "reference_summary": "Wales rugby great Gareth Edwards has been knighted by the Duke of Cambridge in recognition of a glittering sporting career and services to charity.",
+      "lead1_summary": "Sir Gareth attended a ceremony at Windsor Castle on Thursday, after being named in the Queen's Birthday Honours list in June.",
+      "model1_beam_summary": "the <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk>",
+      "t5_small_summary": "the 68-year-old former scrum half won 53 caps for Wales from 1967 to 1978. he also won 10 caps for the British Lions' winning series in new Zealand"
+    },
+    {
+      "article_snippet": "Emmanuel Manzi from Italy won the event at Llanberis, while Richard Roberts was the first Welsh competitor to finish.\nOrganisers say the 10-mile (16km) race attracts some of the best mountain racers in Europe.\nSnowdon Race tweeted its congratulations...",
+      "reference_summary": "About 600 runners have taken part in the annual mountain race up Snowdon with a series of other events being held to mark its 40th anniversary.",
+      "lead1_summary": "Emmanuel Manzi from Italy won the event at Llanberis, while Richard Roberts was the first Welsh competitor to finish.",
+      "model1_beam_summary": "a <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk>",
+      "t5_small_summary": "Emmanuel Manzi from italy won the event at Llanberis, while Richard Roberts was the first Welsh competitor to finish. the 10-mile (16km) race attracts"
+    },
+    {
+      "article_snippet": "Rajab, who heads the Bahrain Centre for Human Rights (BCHR), was convicted in 2012 of taking part in illegal gatherings and disturbing public order.\nAn appeals court later reduced his original three-year term by a year.\nHe was one of several leading ...",
+      "reference_summary": "Prominent Bahraini human rights activist Nabeel Rajab has been freed after serving two years in prison for his involvement in illegal protests.",
+      "lead1_summary": "Rajab, who heads the Bahrain Centre for Human Rights (BCHR), was convicted in 2012 of taking part in illegal gatherings and disturbing public order.",
+      "model1_beam_summary": "the <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk>",
+      "t5_small_summary": "Rajab was convicted in 2012 of taking part in illegal gatherings and disturbing public order. an appeals court reduced his original three-year term by a year. "
+    },
+    {
+      "article_snippet": "11 August 2015 Last updated at 19:18 BST\nSafid has travelled 5,000 miles from his home and is currently one of thousands of migrants living in a camp called the Jungle in Calais, France.\nIt's thought more than 600 child migrants arrived in the UK wit...",
+      "reference_summary": "An 11-year-old migrant from Afghanistan has been speaking to Newsround about being separated from his father during a year long trip to try and reach the UK.",
+      "lead1_summary": "11 August 2015 Last updated at 19:18 BST\nSafid has travelled 5,000 miles from his home and is currently one of thousands of migrants living in a camp called the Jungle in Calais, France.",
+      "model1_beam_summary": "a <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk>",
+      "t5_small_summary": "more than 600 child migrants arrived in the uk without their parents last month alone."
+    }
+  ]
+}
