@@ -7,7 +7,7 @@
 **Roll Number:** `70176490`  
 **Section:** Section A  
 **Degree Program:** Bachelor of Science in Embedded Systems & Artificial Intelligence (BS ESAI)  
-**Repository URL:** [https://github.com/MuhammadAwais-70176490/AI101-ML-Assignment-70176490](https://github.com/MuhammadAwais-70176490/AI101-ML-Assignment-70176490)  
+**Repository URL:** [https://github.com/awaismughal-ux/AI101-ML-Assignment-70176490](https://github.com/awaismughal-ux/AI101-ML-Assignment-70176490)  
 **Submission Tag:** `submission`  
 
 ---
@@ -153,7 +153,7 @@ AI101-ML-Assignment-70176490/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/MuhammadAwais-70176490/AI101-ML-Assignment-70176490.git
+git clone https://github.com/awaismughal-ux/AI101-ML-Assignment-70176490.git
 cd AI101-ML-Assignment-70176490
 ```
 
