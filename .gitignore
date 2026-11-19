@@ -20,6 +20,8 @@ data/*
 *.tar
 *.xls
 *.xlsx
+*.en
+*.ur
 
 # Model checkpoints and weights (> 50 MB)
 *.pt
