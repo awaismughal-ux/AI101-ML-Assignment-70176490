@@ -1,0 +1,133 @@
+{
+  "task": "C3_Image_Captioning",
+  "dataset": "Flickr8k",
+  "vocab_size": 2541,
+  "training_history": {
+    "model1_train_loss": [
+      7.6688,
+      6.5405,
+      5.3992,
+      5.4961
+    ],
+    "model1_val_loss": [
+      7.4302,
+      6.2572,
+      5.3358,
+      5.4235
+    ],
+    "model2_train_loss": [
+      7.7535,
+      7.4072,
+      6.6937,
+      5.4906
+    ],
+    "model2_val_loss": [
+      7.6324,
+      7.2369,
+      6.2092,
+      5.3915
+    ]
+  },
+  "metrics": {
+    "model1_greedy": {
+      "BLEU-1": 9.04,
+      "BLEU-2": 3.79,
+      "BLEU-3": 0.67,
+      "BLEU-4": 0.3,
+      "mean_len": 2.4
+    },
+    "model1_beam3": {
+      "BLEU-1": 0.14,
+      "BLEU-2": 0.01,
+      "BLEU-3": 0.0,
+      "BLEU-4": 0.0,
+      "mean_len": 1.0
+    },
+    "model1_beam5": {
+      "BLEU-1": 0.14,
+      "BLEU-2": 0.01,
+      "BLEU-3": 0.0,
+      "BLEU-4": 0.0,
+      "mean_len": 1.0
+    },
+    "model2_show_tell": {
+      "BLEU-1": 12.62,
+      "BLEU-2": 0.41,
+      "BLEU-3": 0.13,
+      "BLEU-4": 0.08,
+      "mean_len": 20.0
+    }
+  },
+  "qualitative_examples": [
+    {
+      "image_id": "1056338697_4f7d7ce270.jpg",
+      "references": [
+        "a blond woman in a blue shirt appears to wait for a ride",
+        "a blond woman is on the street hailing a taxi",
+        "a woman is signaling is to traffic as seen from behind",
+        "a woman with blonde hair wearing a blue tube top is waving on the side of the street",
+        "the woman in the blue dress is holding out her arm at oncoming traffic"
+      ],
+      "model1_greedy": "a in the",
+      "model1_beam3": "a",
+      "model1_beam5": "a",
+      "model2_greedy": "a a a a a a a a a a a a a a a a a a a a"
+    },
+    {
+      "image_id": "106490881_5a2dd9b7bd.jpg",
+      "references": [
+        "a boy in his blue swim shorts at the beach",
+        "a boy smiles for the camera at a beach",
+        "a young boy in swimming trunks is walking with his arms outstretched on the beach",
+        "children playing on the beach",
+        "the boy is playing on the shore of an ocean"
+      ],
+      "model1_greedy": "a",
+      "model1_beam3": "a",
+      "model1_beam5": "a",
+      "model2_greedy": "a a a a a a a a a a a a a a a a a a a a"
+    },
+    {
+      "image_id": "1082379191_ec1e53f996.jpg",
+      "references": [
+        "a lady and a man with no shirt sit on a dock",
+        "a man and a woman are sitting on a dock together",
+        "a man and a woman sitting on a dock",
+        "a man and woman sitting on a deck next to a lake",
+        "a shirtless man and a woman sitting on a dock"
+      ],
+      "model1_greedy": "a in in the",
+      "model1_beam3": "a",
+      "model1_beam5": "a",
+      "model2_greedy": "a a a a a a a a a a a a a a a a a a a a"
+    },
+    {
+      "image_id": "1084040636_97d9633581.jpg",
+      "references": [
+        "a closeup of a white dog that is laying its head on its paws",
+        "a large white dog lying on the floor",
+        "a white dog has its head on the ground",
+        "a white dog is resting its head on a tiled floor with its eyes open",
+        "a white dog rests its head on the patio bricks"
+      ],
+      "model1_greedy": "a",
+      "model1_beam3": "a",
+      "model1_beam5": "a",
+      "model2_greedy": "a a a a a a a a a a a a a a a a a a a a"
+    },
+    {
+      "image_id": "1096395242_fc69f0ae5a.jpg",
+      "references": [
+        "a boy with a toy gun",
+        "a little boy in orange shorts playing with a toy",
+        "a young boy with his foot outstretched aims a toy at the camera in front of a fireplace",
+        "a young child plays with his new lightup toy",
+        "boy with toy gun pointed at the camera"
+      ],
+      "model1_greedy": "a",
+      "model1_beam3": "a",
+      "model1_beam5": "a",
+      "model2_greedy": "a a a a a a a a a a a a a a a a a a a a"
+    }
+  ]
+}
