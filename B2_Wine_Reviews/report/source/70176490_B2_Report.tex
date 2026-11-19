@@ -1,0 +1,157 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{microtype}
+
+\begin{document}
+
+\title{Multimodal Prediction of Sommelier Quality Scores from Wine Tasting Notes and Metadata}
+
+\author{\IEEEauthorblockN{Muhammad Awais}
+\IEEEauthorblockA{\textit{Department of Intelligent Systems} \\
+\textit{The University of Lahore}\\
+Lahore, Pakistan \\
+Roll No: 70176490 $|$ Section A}
+}
+
+\maketitle
+
+\begin{abstract}
+Predicting sensory evaluation scores awarded by professional wine critics represents a challenging multimodal regression problem requiring the synthesis of unstructured descriptive notes and structured product attributes. In this paper, we develop a rigorous machine learning framework to predict sommelier points (bounded between 80 and 100) on the WineEnthusiast corpus (129,971 records). We establish a mandatory pre-split de-duplication protocol that prunes 9,983 duplicate reviews, eliminating an otherwise severe 13.86\% train-to-test data leakage. Using an 80/10/10 split, we engineer a composite representation combining log-transformed price with median imputation and missing indicators, frequency-bounded categorical one-hot encodings, and sublinear TF-IDF n-grams (12,000 features). Across extensive benchmarking, regularized Ridge Regression achieves the superior test performance ($R^2 = 0.7741$, MAE = 1.1479 points, RMSE = 1.4699), closely followed by LightGBM ($R^2 = 0.7708$, MAE = 1.1525). Our mandatory modality ablation demonstrates that tasting text ($R^2 = 0.7099$) substantially outperforms metadata alone ($R^2 = 0.4416$), while their combination provides significant orthogonal synergy (+0.0642 $R^2$). Finally, stratified tier evaluation reveals pronounced regression to the mean at the extreme score boundaries, and lexical inspection identifies critical sensory discriminators.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Multimodal regression, natural language processing, TF-IDF, Ridge regression, LightGBM, enology, data leakage, regression to the mean.
+\end{IEEEkeywords}
+
+\section{Introduction}
+Evaluating fine wine is an inherently sensory task traditionally performed by trained sommeliers and professional critics. Ratings published in prominent publications such as \textit{WineEnthusiast} exert profound commercial influence on pricing and brand prestige. In standard enological competitions, quality is scored on an internationally recognized 100-point scale, where commercial evaluations generally span from 80 (acceptable) to 100 (classic/transcendent).
+
+Predicting these scores computationally presents two key challenges: (i) unstructured tasting notes capture rich qualitative descriptions of balance, acidity, tannin structure, and fruit profiles, but exhibit high lexical sparsity and subjective stylistic variation; (ii) accompanying structured metadata (bottle price, country, province, grape variety, producing winery) provide strong macro-economic signals but suffer from heavy right-skewness, non-random missingness, and high categorical cardinality.
+
+In this work, we implement an end-to-end machine learning pipeline adhering to rigorous data hygiene standards. We demonstrate that failing to de-duplicate syndicated reviews results in 13.86\% test data contamination, prove the overwhelming predictive dominance of text over metadata, and explain the structural mechanics of boundary error inflation caused by regression to the mean.
+
+\section{Dataset Integrity \& Exploratory Data Analysis}
+\subsection{Provenance and Pre-Split De-duplication}
+The experimental corpus is the \textit{WineEnthusiast} 130k v2 dataset, comprising 129,971 raw reviews across 13 attributes. Due to multi-region syndication and duplicate publication, consumer review datasets frequently contain repeated reviews. 
+
+Auditing the raw corpus revealed that 9,983 records (7.68\%) shared identical wine titles and verbatim tasting notes with other entries. To prevent fatal data leakage where identical reviews occupy both training and evaluation sets, all duplicate records were excised prior to partitioning, yielding a pristine corpus of 119,988 independent samples. Partitioning was then executed in an 80/10/10 stratified-by-points ratio (95,990 train, 11,999 validation, 11,999 test) with seed 42.
+
+\subsection{Exploratory Statistical Analysis}
+The target variable \texttt{points} exhibits a bell-shaped empirical distribution spanning exactly 80 to 100 with mean $\mu = 88.43$ and standard deviation $\sigma = 3.09$. Bottle price exhibits extreme right-skewness ($[4, 3300]$ USD) with 6.9\% missing values. Applying a logarithmic transformation $\log(1 + \text{price})$ stabilizes the variance and reveals a strong linear correlation with points ($r = 0.6169$). Furthermore, review word length averages 40.5 words and correlates positively with score ($r = 0.5218$), confirming that critics craft longer, more complex tasting notes for premium vintages.
+
+\section{Multimodal Feature Engineering \& Modeling}
+\subsection{Strict Preprocessing Pipeline}
+To avoid look-ahead bias, all statistical parameters were fitted exclusively on the 95,990 training instances:
+\begin{itemize}
+    \item \textbf{Numerical Block:} Log-transformed price $\log(1 + p)$ imputed via training median ($2.944$), standardized to zero mean and unit variance, and augmented with a binary missingness indicator ($X_{\text{miss}} \in \{0, 1\}$).
+    \item \textbf{Categorical Block:} High-cardinality features (\texttt{country}, \texttt{province}, \texttt{variety}, \texttt{winery}, \texttt{taster\_name}) were pruned by retaining top-$N$ frequent training classes (25, 50, 50, 100, 20 respectively) with the remainder mapped to \texttt{"Other"}, followed by sparse One-Hot Encoding (248 binary features).
+    \item \textbf{Text Modality Block:} Tasting notes were tokenized using a sublinear TF-IDF vectorizer ($1 + \log(\text{tf})$) spanning unigrams and bigrams ($n \in [1, 2]$), restricted to 12,000 features with document frequency threshold $\text{min\_df} = 5$.
+\end{itemize}
+
+\subsection{Model Architectures}
+We evaluated five regression paradigms:
+\begin{enumerate}
+    \item \textbf{Mean Baseline:} A naive regressor predicting the training target expectation ($\hat{y} = 88.43$).
+    \item \textbf{Ridge Regression:} Linear regression with $L_2$ regularization ($\alpha = 2.0$), optimizing squared loss over 12,250 dimensions via conjugate gradient solvers.
+    \item \textbf{Linear Support Vector Regression (LinearSVR):} Formulated with $\epsilon$-insensitive loss ($\epsilon = 0.0$, $C = 0.5$) for margin-based error robustness.
+    \item \textbf{SGDRegressor:} Stochastic gradient descent with squared loss and $L_2$ penalty ($\alpha = 10^{-5}$).
+    \item \textbf{LightGBM Regressor:} Gradient boosted decision trees (350 trees, max depth 8, 45 leaves, learning rate 0.08) utilizing sparse histogram binning.
+\end{enumerate}
+
+\section{Experimental Results \& Modality Ablation}
+\subsection{Model Benchmark}
+Comprehensive test set results are summarized in Table~\ref{tab:models}. Ridge Regression achieved the top performance, recording an $R^2$ of 0.7741, an MAE of 1.1479 points, and an RMSE of 1.4699. This demonstrates that critic scores can be predicted within approximately $\pm 1.15$ points on a 100-point scale. LightGBM attained near-identical predictive power ($R^2 = 0.7708$, MAE = 1.1525) while requiring substantially greater computational wall-clock time. LinearSVR demonstrated robust alignment ($R^2 = 0.7652$), while SGD achieved $R^2 = 0.7346$. All models massively outperformed the dummy baseline ($R^2 = 0.0$, MAE = 2.5290).
+
+\begin{table}[htbp]
+\caption{Model Performance on Test Set (11,999 Samples)}
+\label{tab:models}
+\centering
+\begin{tabular}{lccc}
+\toprule
+\textbf{Model Architecture} & \textbf{MAE} & \textbf{RMSE} & $\mathbf{R^2}$ \\
+\midrule
+Mean Baseline & 2.5290 & 3.0923 & -0.0000 \\
+SGDRegressor & 1.2338 & 1.5931 & 0.7346 \\
+Linear SVR & 1.1652 & 1.4984 & 0.7652 \\
+LightGBM Regressor & 1.1525 & 1.4805 & 0.7708 \\
+\textbf{Ridge Regression ($\alpha=2.0$)} & \textbf{1.1479} & \textbf{1.4699} & \textbf{0.7741} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Mandatory Modality Ablation Study}
+To rigorously quantify the relative contribution of metadata versus sensory text, we conducted an ablation study comparing single-modality models against the fused representation (Table~\ref{tab:ablation}).
+
+\begin{table}[htbp]
+\caption{Modality Ablation Study on Test Set}
+\label{tab:ablation}
+\centering
+\begin{tabular}{llccc}
+\toprule
+\textbf{Architecture} & \textbf{Feature Subset} & \textbf{MAE} & \textbf{RMSE} & $\mathbf{R^2}$ \\
+\midrule
+Ridge Regression & Metadata Only (250) & 1.8261 & 2.3107 & 0.4416 \\
+Ridge Regression & Text Only (12,000) & 1.3139 & 1.6656 & 0.7099 \\
+\textbf{Ridge Regression} & \textbf{Combined (12,250)} & \textbf{1.1479} & \textbf{1.4699} & \textbf{0.7741} \\
+\midrule
+LightGBM & Metadata Only (250) & 1.7541 & 2.2286 & 0.4806 \\
+LightGBM & Text Only (12,000) & 1.3745 & 1.7512 & 0.6793 \\
+\textbf{LightGBM} & \textbf{Combined (12,250)} & \textbf{1.1525} & \textbf{1.4805} & \textbf{0.7708} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The findings confirm that sensory descriptions alone account for the vast majority of predictive signal ($R^2 = 0.7099$), far exceeding metadata alone ($R^2 = 0.4416$). Integrating metadata with text yields an incremental $+0.0642$ gain in $R^2$ and reduces MAE from 1.3139 to 1.1479. This demonstrates that sommelier text conveys granular quality distinctions that cannot be inferred from price and terroir alone.
+
+\section{Diagnostic Analysis \& Discussion}
+\subsection{Stratified Score Tier Analysis and Regression to the Mean}
+To inspect error behavior across quality tiers, we partitioned the test set into four rating tiers (Table~\ref{tab:tiers}).
+
+\begin{table}[htbp]
+\caption{Stratified Performance across Score Tiers (Ridge)}
+\label{tab:tiers}
+\centering
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Quality Tier} & \textbf{Count} & \textbf{\%} & \textbf{True $\mu$} & \textbf{Pred $\mu$} & \textbf{MAE} \\
+\midrule
+80--84 (Commercial) & 1,216 & 10.1\% & 83.14 & 84.40 & 1.5341 \\
+85--89 (Everyday) & 6,248 & 52.1\% & 87.15 & 87.44 & 1.0039 \\
+90--94 (Fine Wine) & 4,299 & 35.8\% & 91.42 & 90.73 & 1.2010 \\
+95--100 (Classic) & 236 & 2.0\% & 95.66 & 93.90 & 2.0021 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The error profile provides a textbook demonstration of \textit{regression to the mean}:
+\begin{enumerate}
+    \item In the central everyday band (85--89), which holds 52.1\% of the distribution, predictions are exceptionally accurate ($\text{MAE} = 1.0039$).
+    \item For lowest-tier wines (80--84, true $\mu = 83.14$), the model over-predicts by $+1.26$ points ($\text{pred } \mu = 84.40$).
+    \item For top-tier wines (95--100, true $\mu = 95.66$), the model under-predicts by $-1.76$ points ($\text{pred } \mu = 93.90$, $\text{MAE} = 2.0021$).
+\end{enumerate}
+Because $L_2$ regularization penalizes large feature weights and squared loss minimizes global variance, linear models inherently pull predictions toward the sample mean ($\bar{y} = 88.43$).
+
+\subsection{Lexical Feature Weights}
+Interrogating the Ridge coefficients exposes the vocabulary governing score assignments. The strongest positive weights correspond to terms reflecting balance, aesthetic excellence, and aging potential: \textit{gorgeous} (+7.70), \textit{superb} (+6.93), \textit{beautiful} (+6.89), \textit{delicious} (+6.78), and \textit{complex} (+6.45). Conversely, the strongest negative weights penalize structural deficiencies: \textit{lacks} (-5.77), \textit{odd} (-5.16), \textit{sour} (-4.78), \textit{strange} (-4.41), and \textit{vegetal} (-4.37).
+
+\subsection{Counterfactual De-duplication Leakage Analysis}
+To quantify the hazard of naive splitting, we ran a counterfactual experiment partitioning raw data without prior de-duplication. We observed that 1,802 test samples (13.86\% of the test set) appeared verbatim in the training set. This severe leakage artificially deflates reported test errors, illustrating why strict deduplication is an indispensable prerequisite in NLP benchmarking.
+
+\section{Conclusion}
+This study demonstrated that sommelier wine scores are highly predictable ($R^2 = 0.7741$) when sensory text is synthesized with price and geographic metadata. Pre-split de-duplication proved essential to prevent 13.86\% data leakage. Modality ablations proved that textual tasting notes carry over 70\% of the explanatory variance, while error tier diagnostics illuminated the systematic presence of regression to the mean at extreme rating boundaries.
+
+\bibliographystyle{IEEEtran}
+\begin{thebibliography}{00}
+\bibitem{thoutt2017} Z.~Thoutt, ``Wine Reviews: 130k wine reviews with variety, location, winery, price, and points,'' \textit{Kaggle Datasets}, 2017.
+\bibitem{pedregosa2011} F.~Pedregosa \textit{et al.}, ``Scikit-learn: Machine learning in Python,'' \textit{JMLR}, vol.~12, pp.~2825--2830, 2011.
+\bibitem{ke2017lightgbm} G.~Ke \textit{et al.}, ``LightGBM: A highly efficient gradient boosting decision tree,'' in \textit{NeurIPS}, 2017.
+\bibitem{galton1886} F.~Galton, ``Regression towards mediocrity in hereditary stature,'' \textit{J. Anthropol. Inst.}, 1886.
+\end{thebibliography}
+
+\end{document}
