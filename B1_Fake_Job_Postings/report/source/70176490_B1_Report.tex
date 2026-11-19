@@ -1,0 +1,158 @@
+\documentclass[conference,10pt]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\begin{document}
+
+\title{Task [B1]: Detecting Fraudulent Job Postings\\
+\large Department of Intelligent Systems, The University of Lahore -- AI-101 Introduction to AI}
+
+\author{\IEEEauthorblockN{Muhammad Awais}
+\IEEEauthorblockA{\textit{Department of Intelligent Systems} \\
+\textit{The University of Lahore}\\
+Roll No: 70176490 \quad Section: A \\
+GitHub: \url{https://github.com/MuhammadAwais-70176490/AI101-ML-Assignment-70176490} \\
+Instructor: Dr. Muhammad Awais, AI Architect}
+}
+
+\maketitle
+
+\begin{abstract}
+Online employment fraud exposes job applicants to financial extortion and identity theft. Predicting fraudulent recruitment advertisements is challenging due to acute class imbalance (4.84\% scams) and multi-modal heterogeneity combining free text with categorical and missingness indicators. Benchmarking Logistic Regression, Complement Naive Bayes, and LightGBM on the EMSCAD dataset within a ColumnTransformer pipeline, LightGBM achieved the highest test performance with a PR-AUC of 0.9119, an ROC-AUC of 0.9924, and a Fraud F1-score of 0.8462 (95.19\% Precision). Our mandatory ablation study establishes that fusing textual TF-IDF features with structural metadata significantly outperforms either modality in isolation, elevating precision from 81.75\% to 95.19\% while maintaining an ultra-low false alarm rate (0.20\%).
+\end{abstract}
+
+\section{Introduction}
+Online recruitment fraud has escalated with digital employment boards, subjecting applicants to identity theft, phishing scams, and advance-fee fraud. The Employment Scam Aegean Dataset (EMSCAD) offers an empirical benchmark containing 17,880 genuine and fraudulent job advertisements. Detecting recruitment scams presents two foundational challenges: severe class imbalance (only 4.84\% are fraudulent) and multi-modal data structures merging unstructured text with categorical metadata. In this study, we build a leakage-free multi-modal pipeline using scikit-learn's `ColumnTransformer` to fuse TF-IDF n-grams with structural flags. Benchmarking across stratified 70/15/15 partitions, LightGBM attained a PR-AUC of 0.9119, an ROC-AUC of 0.9924, and a Fraud F1 of 0.8462 (95.19\% precision). Crucially, combining structured metadata with text features reduced false alarms by 13.44 percentage points over text alone.
+
+\section{Problem Statement}
+Given an input instance $\mathbf{x} = (\mathbf{x}_{\text{struct}}, \mathbf{x}_{\text{text}})$ combining free text (title, profile, description, requirements, benefits) and structured metadata (employment type, experience, missing indicators, binary flags), the objective is to learn a mapping $f: \mathbf{x} \mapsto y \in \{0, 1\}$, where $y=1$ denotes a fraudulent scam and $y=0$ a legitimate vacancy. Because legitimate jobs represent 95.16\% of samples, raw classification accuracy is practically meaningless. Primary figures of merit are **Fraud Precision, Recall, F1-score, and Precision-Recall AUC (PR-AUC)**.
+
+\section{Dataset Used}
+We analyze the Employment Scam Aegean Dataset (EMSCAD), collected by Vidros \textit{et al.} \cite{vidros2017}. The dataset comprises 17,880 postings across 17 attributes. To extract predictive signals, text fields were concatenated into unified corpora, while missingness flags were engineered for sparse features (such as missing company profile and missing salary range). All transformers were fitted strictly on the training partition.
+
+\section{Dataset Statistics}
+Table \ref{tab:dataset} outlines dataset characteristics, class distribution, and partition sizes.
+
+\begin{table}[htbp]
+\caption{Dataset Statistics and Modality Composition}
+\label{tab:dataset}
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{Property} & \textbf{Value} \\
+\midrule
+Total Job Postings & 17,880 \\
+Class Split (Real / Fraud) & 17,014 (95.16\%) / 866 (4.84\%) \\
+Imbalance Ratio & 19.6 : 1 \\
+Text Fields (Concatenated) & Title, Profile, Description, Requirements, Benefits \\
+Categorical Features & Employment Type, Experience, Education \\
+Binary / Missing Flags & Logo, Screening, Telecommuting, Profile Missing \\
+Split Ratios (Train / Val / Test) & 70\% / 15\% / 15\% (12,516 / 2,682 / 2,682) \\
+Test Split Fraud Prevalence & 130 Fraudulent / 2,552 Real \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\linewidth]{figures/eda_fraud_analysis.png}
+\caption{Exploratory Data Analysis: missingness per attribute and fraud rates conditioned on company logo presence and employment type.}
+\label{fig:eda}
+\end{figure}
+
+Exploratory analysis (Fig. \ref{fig:eda}) reveals that missing values carry massive predictive signals: postings lacking a company logo have a **15.84\% fraud rate**, compared to just **1.73\%** for listings with logos (a 9.2-fold relative risk increase). Furthermore, over 67\% of scam listings lack a company profile entirely.
+
+\section{Methodology}
+\subsection{Learning Setting}
+We frame detection as supervised binary classification under severe class imbalance. We benchmark three models: (i) Balanced Logistic Regression; (ii) Complement Naive Bayes; and (iii) LightGBM Gradient Boosted Trees.
+
+\subsection{Data Split Approach}
+The dataset was split using stratified 70/15/15 sampling into 12,516 training, 2,682 validation, and 2,682 testing postings with seed 42. Feature scaling, categorical encoding, and TF-IDF vocabulary extraction (10,000 uni- and bi-grams) were fitted strictly within `ColumnTransformer` pipelines on training folds.
+
+\subsection{Parameter Settings}
+Validation set precision-recall analysis determined optimal classification decision thresholds, summarized in Table \ref{tab:params}.
+
+\begin{table}[htbp]
+\caption{Hyperparameter Search Space and Optimal Thresholds}
+\label{tab:params}
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{Model} & \textbf{Search Space} & \textbf{Selected} \\
+\midrule
+Logistic Reg. & $C \in \{0.1, 1, 10\}$, balanced weights & $C = 1.0, t^* = 0.772$ \\
+Complement NB & $\alpha \in \{0.1, 0.5, 1.0\}$, TF-IDF text & $\alpha = 0.5, t^* = 0.962$ \\
+LightGBM & $n \in \{100, 150\}$, lr $\in \{0.03, 0.05\}$, balanced & $n = 150, \text{lr} = 0.05, t^* = 0.786$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Results and Analysis}
+\subsection{Results}
+Test-set metrics on the 2,682 holdout samples are reported in Table \ref{tab:results}.
+
+\begin{table}[htbp]
+\caption{Test-Set Multi-Modal Results. Best values in bold.}
+\label{tab:results}
+\centering
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Model} & \textbf{Precision} & \textbf{Recall} & \textbf{F1 (Fraud)} & \textbf{PR-AUC} & \textbf{ROC-AUC} \\
+\midrule
+Logistic Reg. & 0.8279 & \textbf{0.7769} & 0.8016 & 0.8881 & 0.9906 \\
+Complement NB & 0.7103 & 0.5846 & 0.6414 & 0.6871 & 0.9576 \\
+\textbf{LightGBM} & \textbf{0.9519} & 0.7615 & \textbf{0.8462} & \textbf{0.9119} & \textbf{0.9924} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\linewidth]{figures/pr_roc_curves_confusion.png}
+\caption{Test-set Precision-Recall curves and LightGBM confusion matrix on 2,682 holdout postings (threshold $t = 0.786$).}
+\label{fig:results}
+\end{figure}
+
+\subsection{Mandatory Modality Ablation Study}
+To evaluate the contribution of each data modality, the best model (LightGBM) was evaluated on: (i) Structured features only; (ii) Text features only; and (iii) Both combined (Table \ref{tab:ablation}).
+
+\begin{table}[htbp]
+\caption{Mandatory Modality Ablation Study on Test Set}
+\label{tab:ablation}
+\centering
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Modality} & \textbf{Precision} & \textbf{Recall} & \textbf{F1 (Fraud)} & \textbf{PR-AUC} \\
+\midrule
+Structured-Only & 0.4114 & 0.5538 & 0.4721 & 0.5237 \\
+Text-Only & 0.8175 & \textbf{0.7923} & 0.8047 & 0.8838 \\
+\textbf{Combined} & \textbf{0.9519} & 0.7615 & \textbf{0.8462} & \textbf{0.9119} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Analysis}
+\textbf{Why Accuracy is Misleading:} Because legitimate job postings account for 95.16\% of instances, a naive baseline predicting all postings as real achieves a deceptively high 95.16\% accuracy, but achieves **zero fraud detection** (0.0\% Recall and F1). In recruitment fraud, missing scams harms job applicants; PR-AUC and F1-score are the only faithful metrics.
+
+\textbf{Modality Synergy:} The ablation study confirms that combining text and structured features outperforms either modality alone. Structured features alone yield only 41.14\% precision. Text-only achieves 81.75\% precision. Combining them elevates precision to **95.19\% (+13.44\%)** and F1 to **0.8462**, because structural attributes (e.g., absence of logos and missing profiles) act as critical confirmation filters against keyword ambiguity.
+
+\textbf{Indicative Features and False Positives:} Top logistic regression fraud weights include `aptitude staffing` (+3.87), `money` (+3.46), `link` (+3.29), `phone` (+2.94), `earn` (+2.88), and `data entry` (+2.86). Scams disproportionately advertise high-paying data entry with upfront fees. Only 5 out of 2,552 legitimate postings were misclassified as fraud (99.80\% specificity); inspection reveals genuine ads mentioning competitive compensation while omitting company logos.
+
+\section{Conclusion}
+Multi-modal fusion of free text and structural indicators provides a powerful defense against job scams. LightGBM with threshold calibration ($t = 0.786$) attained a Fraud F1 of 0.8462 and 95.19\% precision on unseen test data. Combining modalities reduced false alarms by 13.44 percentage points, proving essential for reliable production deployment on online employment platforms.
+
+\section*{AI Use Disclosure}
+I used Google Antigravity / Gemini 3.8 to assist in setting up ColumnTransformer multi-modal pipelines, generating PR-curve diagnostics, and preparing LaTeX documentation. All numerical results and code were executed and verified by me.
+
+\begin{thebibliography}{00}
+\bibitem{vidros2017} S. Vidros, C. Kolias, G. Kambourakis, and L. Akoglu, ``Automatic Detection of Online Recruitment Frauds: Characteristics, Methods, and a Public Dataset,'' \textit{Future Internet}, vol. 9, no. 1, p. 6, 2017.
+\bibitem{scikit-learn} F. Pedregosa \textit{et al.}, ``Scikit-learn: Machine Learning in Python,'' \textit{Journal of Machine Learning Research}, vol. 12, pp. 2825--2830, 2011.
+\end{thebibliography}
+
+\end{document}
