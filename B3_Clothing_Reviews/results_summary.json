@@ -1,0 +1,383 @@
+{
+  "task_id": "B3",
+  "title": "Predicting Star Ratings of E-Commerce Clothing Reviews",
+  "dataset": "Women's E-Commerce Clothing Reviews",
+  "raw_count": 23486,
+  "empty_text_dropped": 845,
+  "clean_count": 22641,
+  "leakage_feature_dropped": "Recommended IND",
+  "train_count": 15848,
+  "val_count": 3396,
+  "test_count": 3397,
+  "rating_distribution": {
+    "1": 821,
+    "2": 1549,
+    "3": 2823,
+    "4": 4908,
+    "5": 12540
+  },
+  "models_5class": {
+    "Majority Baseline": {
+      "val": {
+        "Accuracy": 0.5539,
+        "Macro-F1": 0.1426,
+        "Weighted-F1": 0.3949,
+        "Ordinal_MAE": 0.8165,
+        "Per_Class_Recall": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "test": {
+        "Accuracy": 0.5537,
+        "Macro-F1": 0.1426,
+        "Weighted-F1": 0.3947,
+        "Ordinal_MAE": 0.8163,
+        "Per_Class_Recall": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    },
+    "Logistic Regression (Unweighted)": {
+      "val": {
+        "Accuracy": 0.6608,
+        "Macro-F1": 0.4185,
+        "Weighted-F1": 0.6288,
+        "Ordinal_MAE": 0.4358,
+        "Per_Class_Recall": [
+          0.0732,
+          0.2361,
+          0.4326,
+          0.3342,
+          0.9309
+        ]
+      },
+      "test": {
+        "Accuracy": 0.6512,
+        "Macro-F1": 0.4208,
+        "Weighted-F1": 0.6216,
+        "Ordinal_MAE": 0.4448,
+        "Per_Class_Recall": [
+          0.1707,
+          0.1466,
+          0.3939,
+          0.3528,
+          0.9197
+        ]
+      }
+    },
+    "Logistic Regression (Balanced)": {
+      "val": {
+        "Accuracy": 0.6296,
+        "Macro-F1": 0.4823,
+        "Weighted-F1": 0.6396,
+        "Ordinal_MAE": 0.4614,
+        "Per_Class_Recall": [
+          0.4309,
+          0.3734,
+          0.461,
+          0.4552,
+          0.7804
+        ]
+      },
+      "test": {
+        "Accuracy": 0.622,
+        "Macro-F1": 0.4746,
+        "Weighted-F1": 0.6341,
+        "Ordinal_MAE": 0.4686,
+        "Per_Class_Recall": [
+          0.4634,
+          0.3319,
+          0.4292,
+          0.4722,
+          0.7703
+        ]
+      }
+    },
+    "Linear SVM (Unweighted)": {
+      "val": {
+        "Accuracy": 0.6502,
+        "Macro-F1": 0.4325,
+        "Weighted-F1": 0.6246,
+        "Ordinal_MAE": 0.4461,
+        "Per_Class_Recall": [
+          0.1789,
+          0.2403,
+          0.4043,
+          0.3288,
+          0.9128
+        ]
+      },
+      "test": {
+        "Accuracy": 0.6509,
+        "Macro-F1": 0.4397,
+        "Weighted-F1": 0.6277,
+        "Ordinal_MAE": 0.4439,
+        "Per_Class_Recall": [
+          0.2439,
+          0.2026,
+          0.375,
+          0.365,
+          0.907
+        ]
+      }
+    },
+    "Linear SVM (Balanced)": {
+      "val": {
+        "Accuracy": 0.6422,
+        "Macro-F1": 0.4588,
+        "Weighted-F1": 0.6356,
+        "Ordinal_MAE": 0.4476,
+        "Per_Class_Recall": [
+          0.3008,
+          0.3305,
+          0.4539,
+          0.3546,
+          0.8581
+        ]
+      },
+      "test": {
+        "Accuracy": 0.6382,
+        "Macro-F1": 0.457,
+        "Weighted-F1": 0.635,
+        "Ordinal_MAE": 0.4651,
+        "Per_Class_Recall": [
+          0.3659,
+          0.3017,
+          0.4033,
+          0.3826,
+          0.8506
+        ]
+      }
+    },
+    "LightGBM (Unweighted)": {
+      "val": {
+        "Accuracy": 0.6475,
+        "Macro-F1": 0.4253,
+        "Weighted-F1": 0.6222,
+        "Ordinal_MAE": 0.4514,
+        "Per_Class_Recall": [
+          0.1545,
+          0.2146,
+          0.3948,
+          0.3533,
+          0.9054
+        ]
+      },
+      "test": {
+        "Accuracy": 0.6444,
+        "Macro-F1": 0.4194,
+        "Weighted-F1": 0.6189,
+        "Ordinal_MAE": 0.4557,
+        "Per_Class_Recall": [
+          0.1545,
+          0.1983,
+          0.3844,
+          0.3501,
+          0.9054
+        ]
+      }
+    },
+    "LightGBM (Balanced)": {
+      "val": {
+        "Accuracy": 0.6378,
+        "Macro-F1": 0.4505,
+        "Weighted-F1": 0.6345,
+        "Ordinal_MAE": 0.442,
+        "Per_Class_Recall": [
+          0.2033,
+          0.2876,
+          0.4515,
+          0.4375,
+          0.8299
+        ]
+      },
+      "test": {
+        "Accuracy": 0.6332,
+        "Macro-F1": 0.4736,
+        "Weighted-F1": 0.6325,
+        "Ordinal_MAE": 0.4501,
+        "Per_Class_Recall": [
+          0.3333,
+          0.2629,
+          0.4528,
+          0.4396,
+          0.815
+        ]
+      }
+    }
+  },
+  "ablation": {
+    "Logistic Regression (Metadata Only)": {
+      "Accuracy": 0.5537,
+      "Macro-F1": 0.1426,
+      "Weighted-F1": 0.3947,
+      "Ordinal_MAE": 0.8163,
+      "Per_Class_Recall": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "Logistic Regression (Text Only)": {
+      "Accuracy": 0.652,
+      "Macro-F1": 0.4133,
+      "Weighted-F1": 0.6216,
+      "Ordinal_MAE": 0.4463,
+      "Per_Class_Recall": [
+        0.1382,
+        0.1509,
+        0.3868,
+        0.3609,
+        0.9213
+      ]
+    },
+    "Logistic Regression (Combined)": {
+      "Accuracy": 0.6512,
+      "Macro-F1": 0.4208,
+      "Weighted-F1": 0.6216,
+      "Ordinal_MAE": 0.4448,
+      "Per_Class_Recall": [
+        0.1707,
+        0.1466,
+        0.3939,
+        0.3528,
+        0.9197
+      ]
+    },
+    "LightGBM (Metadata Only)": {
+      "Accuracy": 0.5408,
+      "Macro-F1": 0.1606,
+      "Weighted-F1": 0.4084,
+      "Ordinal_MAE": 0.8246,
+      "Per_Class_Recall": [
+        0.0,
+        0.0,
+        0.0189,
+        0.0366,
+        0.958
+      ]
+    },
+    "LightGBM (Text Only)": {
+      "Accuracy": 0.6447,
+      "Macro-F1": 0.4216,
+      "Weighted-F1": 0.6178,
+      "Ordinal_MAE": 0.4554,
+      "Per_Class_Recall": [
+        0.1707,
+        0.2112,
+        0.3561,
+        0.3433,
+        0.9123
+      ]
+    },
+    "LightGBM (Combined)": {
+      "Accuracy": 0.6444,
+      "Macro-F1": 0.4194,
+      "Weighted-F1": 0.6189,
+      "Ordinal_MAE": 0.4557,
+      "Per_Class_Recall": [
+        0.1545,
+        0.1983,
+        0.3844,
+        0.3501,
+        0.9054
+      ]
+    }
+  },
+  "reframing_3class": {
+    "Logistic Regression (3-Class Unweighted)": {
+      "Accuracy": 0.8322,
+      "Macro-F1": 0.5941,
+      "Weighted-F1": 0.8108,
+      "Per_Class_Recall": [
+        0.4507,
+        0.2594,
+        0.9767
+      ]
+    },
+    "Logistic Regression (3-Class Balanced)": {
+      "Accuracy": 0.8095,
+      "Macro-F1": 0.6424,
+      "Weighted-F1": 0.8246,
+      "Per_Class_Recall": [
+        0.6028,
+        0.5401,
+        0.8812
+      ]
+    },
+    "LightGBM (3-Class Unweighted)": {
+      "Accuracy": 0.8331,
+      "Macro-F1": 0.6091,
+      "Weighted-F1": 0.8174,
+      "Per_Class_Recall": [
+        0.4789,
+        0.2995,
+        0.9675
+      ]
+    }
+  },
+  "confusion_5class": [
+    [
+      46.34146341463415,
+      31.70731707317073,
+      21.138211382113823,
+      0.0,
+      0.8130081300813009
+    ],
+    [
+      17.24137931034483,
+      33.189655172413794,
+      40.08620689655172,
+      8.189655172413794,
+      1.293103448275862
+    ],
+    [
+      8.962264150943396,
+      23.349056603773587,
+      42.924528301886795,
+      20.047169811320757,
+      4.716981132075472
+    ],
+    [
+      1.7639077340569878,
+      5.563093622795115,
+      16.960651289009498,
+      47.218453188602446,
+      28.493894165535956
+    ],
+    [
+      0.8506113769271665,
+      1.1164274322169059,
+      2.073365231259968,
+      18.92610313662945,
+      77.03349282296651
+    ]
+  ],
+  "confusion_3class": [
+    [
+      60.281690140845065,
+      36.33802816901409,
+      3.3802816901408446
+    ],
+    [
+      29.71698113207547,
+      54.009433962264154,
+      16.27358490566038
+    ],
+    [
+      2.9029793735676086,
+      8.97631779984721,
+      88.12070282658519
+    ]
+  ]
+}
