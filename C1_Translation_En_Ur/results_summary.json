@@ -1,0 +1,157 @@
+{
+  "task_id": "C1",
+  "title": "English-to-Urdu Neural Machine Translation",
+  "dataset": "OPUS-100 (en-ur)",
+  "filtering_waterfall": {
+    "initial_subset": 80000,
+    "after_dedup_and_empty": 79190,
+    "after_length_ratio_le_3": 78672,
+    "after_length_le_30": 47499,
+    "after_urdu_script_check": 47330
+  },
+  "corpus_statistics": {
+    "en_mean_len": 16.73,
+    "en_median_len": 16.0,
+    "en_p95_len": 31.0,
+    "ur_mean_len": 16.66,
+    "ur_median_len": 16.0,
+    "ur_p95_len": 30.0,
+    "test_oov_en_pct": 3.91,
+    "test_oov_ur_pct": 4.81
+  },
+  "vocabulary": {
+    "english_vocab_size": 8000,
+    "urdu_vocab_size": 10000
+  },
+  "training": {
+    "epochs": 3,
+    "train_samples": 3000,
+    "val_samples": 500,
+    "train_losses": [
+      6.969,
+      5.8872,
+      5.6105
+    ],
+    "val_losses": [
+      6.3029,
+      6.2195,
+      6.1367
+    ]
+  },
+  "metrics": {
+    "model1_greedy": {
+      "BLEU": 0.65,
+      "chrF": 9.43
+    },
+    "model1_beam4": {
+      "BLEU": 0.89,
+      "chrF": 10.17
+    },
+    "model2_marian": {
+      "BLEU": 12.14,
+      "chrF": 36.76
+    }
+  },
+  "length_buckets": {
+    "Short (<10)": {
+      "count": 27,
+      "BLEU_M1_Greedy": 0.24,
+      "BLEU_M1_Beam": 0.49,
+      "BLEU_Marian": 24.46
+    },
+    "Medium (10–20)": {
+      "count": 13,
+      "BLEU_M1_Greedy": 0.72,
+      "BLEU_M1_Beam": 1.0,
+      "BLEU_Marian": 11.55
+    },
+    "Long (>20)": {
+      "count": 20,
+      "BLEU_M1_Greedy": 0.76,
+      "BLEU_M1_Beam": 0.95,
+      "BLEU_Marian": 10.34
+    }
+  },
+  "examples": [
+    {
+      "index": 2,
+      "source_en": "Those [believers] who responded to Allah and the Messenger after injury had struck them. For those who did good among them and feared Allah is a great reward -",
+      "reference_ur": "جن لوگوں نے زخم کھانے کے بعد بھی اللہ اور رسول کی پکار پر لبیک کہا اُن میں جو اشخاص نیکوکار اور پرہیز گار ہیں اُن کے لیے بڑا اجر ہے",
+      "model1_greedy": "اور ان کے اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور",
+      "model1_beam": "اور ہم نے ان لوگوں کو اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور",
+      "marian_mt": "جن لوگوں نے زخم کھا چکنے کے بعد بھی اللہ اور رسول (صلی اللہ علیہ وآلہ وسلم) کے حکم پر لبیک کہا، اُن میں جو صاحبانِ اِحسان ہیں اور پرہیزگار ہیں، ان کے لئے بڑا اَجر ہے،"
+    },
+    {
+      "index": 7,
+      "source_en": "paper size",
+      "reference_ur": "paper size",
+      "model1_greedy": "<unk> <unk> <unk> <unk> <unk>",
+      "model1_beam": "<unk> <unk> <unk> <unk>",
+      "marian_mt": "کاغذ کا سائز"
+    },
+    {
+      "index": 12,
+      "source_en": "But why have not bracelets of gold been put upon him, or why have there not come with him angels as companions?",
+      "reference_ur": "پھر کیوں اس کے اوپر سونے کے کنگن نہیں نازل کئے گئے اور کیوں اس کے ساتھ ملائکہ جمع ہوکر نہیں آئے",
+      "model1_greedy": "اور ہم نے کہا کہ وہ لوگ کہ وہ ( ع ) کے لئے کی طرف سے نہیں",
+      "model1_beam": "اور ہم نے کہا کہ ہم نے کہا کہ ہم نے کہا کہ ہم نے ان کی طرف سے نہیں",
+      "marian_mt": "پھر (اگر یہ سچا رسول ہے تو) اِس پر (پہننے کے لئے) سونے کے کنگن کیوں نہیں اتارے جاتے یا اِس کے ساتھ فرشتے جمع ہو کر (پے در پے) کیوں نہیں آجاتے؟،"
+    },
+    {
+      "index": 18,
+      "source_en": "-what kid... when they shot me, I'd forgotten my amulet.",
+      "reference_ur": "جب مجھے گولی لگی تھی ، میں تعویذ گھر بھول گیا تھا",
+      "model1_greedy": "اور نے کہا کہ وہ لوگ نے کہا کہ وہ سے کی طرف سے کی طرف سے",
+      "model1_beam": "اور ہم نے کہا کہ یہ کہ یہ لوگ ہے کہ یہ لوگ ہے",
+      "marian_mt": "جب انہوں نے مجھے گولی مار دی تو میں نے اپنے ساتھی کو بھول گیا تھا."
+    },
+    {
+      "index": 24,
+      "source_en": "I hate to leave, I have to, though",
+      "reference_ur": "میں اگرچہ، میں پڑے، چھوڑنے کے لئے نفرت کرتے ہیں",
+      "model1_greedy": "اور نے کہا کہ وہ کہ وہ کہ وہ ( میں سے",
+      "model1_beam": "اور ہم نے کہا کہ تم نے کہا کہ میں سے",
+      "marian_mt": "میں، اگرچہ، جانے کے لئے نفرت کرتا ہوں،"
+    },
+    {
+      "index": 31,
+      "source_en": "When We bestow a favour upon a person, he turns his back and draws aside; and when evil afflicts him he gives himself up to despair.",
+      "reference_ur": "اور جب ہم انسان کو کوئی نعمت عطا کرتے ہیں تو وہ منہ پھیر لیتا ہے اور پہلو تہی کرتا ہے اور جب اسے کوئی تکلیف پہنچتی ہے تو مایوس ہو جاتا ہے۔",
+      "model1_greedy": "اور ہم نے ان کے اور ہم نے اس کے اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور",
+      "model1_beam": "اور ہم نے کہا کہ ہم نے ان کی طرف سے اور ہم نے اس کی طرف سے اور اور اور ہے",
+      "marian_mt": "اور جب ہم انسان پر (کوئی) انعام فرماتے ہیں تو وہ (شکر سے) گریز کرتا اور پہلو تہی کر جاتا ہے اور جب اسے کوئی تکلیف پہنچ جاتی ہے تو مایوس ہو جاتا ہے (گویا نہ شاکر ہے نہ صابر)،"
+    },
+    {
+      "index": 38,
+      "source_en": "- I'll send the guards there.",
+      "reference_ur": "-میں وہاں گارڈز بھیج دیا جائے گا.",
+      "model1_greedy": "اور اس کے کی طرف سے کی طرف سے",
+      "model1_beam": "اور اس کے لئے کی طرف کی طرف سے",
+      "marian_mt": "- میں سپاہیوں کو وہاں بھیج دیں گے."
+    },
+    {
+      "index": 44,
+      "source_en": "paper size",
+      "reference_ur": "paper size",
+      "model1_greedy": "<unk> <unk> <unk> <unk> <unk>",
+      "model1_beam": "<unk> <unk> <unk> <unk>",
+      "marian_mt": "کاغذ کا سائز"
+    },
+    {
+      "index": 51,
+      "source_en": "Such were the 'Ad People: they rejected the Signs of their Lord and Cherisher; disobeyed His messengers; And followed the command of every powerful, obstinate transgressor.",
+      "reference_ur": "اور یہ عاد تھے کہ اپنے رب کی باتوں سے منکر ہوئے اوراس کے رسولوں کو نہ مانا اور ہر ایک جبار سرکش کا حکم مانتے تھے",
+      "model1_greedy": "اور ان کے اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور اور",
+      "model1_beam": "اور ہم نے ان کی اور اور اور اور اور اور اور اور اور اور اور اور اور اور ہے اور ہے",
+      "marian_mt": "اور یہ ہے قومِ عاد جس نے جان بوجھ کر اپنے پروردگار کی آیتوں (نشانیوں) کا انکار کیا اور اس کے رسولوں کی نافرمانی کی اور ہر سرکش اور دشمن (حق) کی اطاعت کی۔"
+    },
+    {
+      "index": 58,
+      "source_en": "paper size",
+      "reference_ur": "paper size",
+      "model1_greedy": "<unk> <unk> <unk> <unk> <unk>",
+      "model1_beam": "<unk> <unk> <unk> <unk>",
+      "marian_mt": "کاغذ کا سائز"
+    }
+  ]
+}
