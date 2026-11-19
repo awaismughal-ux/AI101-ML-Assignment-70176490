@@ -1,0 +1,89 @@
+{
+  "dataset_stats": {
+    "samples": 17880,
+    "real": 17014,
+    "fraud": 866,
+    "fraud_pct": 4.8434004474272925,
+    "train": 12516,
+    "val": 2682,
+    "test": 2682
+  },
+  "test_results": [
+    {
+      "Model": "Logistic Regression (Balanced)",
+      "Optimal Threshold": 0.7720758890823588,
+      "Precision (Fraud)": 0.8278688524590164,
+      "Recall (Fraud)": 0.7769230769230769,
+      "F1 (Fraud)": 0.8015873015873016,
+      "PR-AUC": 0.8881312394101515,
+      "ROC-AUC": 0.9905594405594406
+    },
+    {
+      "Model": "Complement Naive Bayes",
+      "Optimal Threshold": 0.961922248405457,
+      "Precision (Fraud)": 0.7102803738317757,
+      "Recall (Fraud)": 0.5846153846153846,
+      "F1 (Fraud)": 0.6413502109704642,
+      "PR-AUC": 0.6870521201278205,
+      "ROC-AUC": 0.9576169520135037
+    },
+    {
+      "Model": "LightGBM Classifier",
+      "Optimal Threshold": 0.7862827849216392,
+      "Precision (Fraud)": 0.9519230769230769,
+      "Recall (Fraud)": 0.7615384615384615,
+      "F1 (Fraud)": 0.8461538461538461,
+      "PR-AUC": 0.9119306886024106,
+      "ROC-AUC": 0.9923709910778876
+    }
+  ],
+  "ablation": [
+    {
+      "Modality": "Structured-Only",
+      "Precision": 0.4114285714285714,
+      "Recall": 0.5538461538461539,
+      "F1 (Fraud)": 0.4721311475409836,
+      "PR-AUC": 0.5237229274485881,
+      "ROC-AUC": 0.9293600795755967
+    },
+    {
+      "Modality": "Text-Only",
+      "Precision": 0.8174603174603174,
+      "Recall": 0.7923076923076923,
+      "F1 (Fraud)": 0.8046875,
+      "PR-AUC": 0.8838076998468994,
+      "ROC-AUC": 0.9837533156498673
+    },
+    {
+      "Modality": "Combined (Struct + Text)",
+      "Precision": 0.9519230769230769,
+      "Recall": 0.7615384615384615,
+      "F1 (Fraud)": 0.8461538461538461,
+      "PR-AUC": 0.9119306886024106,
+      "ROC-AUC": 0.9923709910778876
+    }
+  ],
+  "best_model": "LightGBM Classifier",
+  "confusion_matrix": [
+    [
+      2547,
+      5
+    ],
+    [
+      31,
+      99
+    ]
+  ],
+  "top_fraud_words": {
+    "text__aptitude staffing": 3.867756421746456,
+    "text__money": 3.4564068710759996,
+    "text__link": 3.2947890555826174,
+    "text__aptitude": 3.0998704386451164,
+    "text__engineering": 3.028869631017823,
+    "text__phone": 2.9449741653868666,
+    "text__financing": 2.8949790984504546,
+    "text__earn": 2.881835834141803,
+    "text__000": 2.87230677489919,
+    "text__data entry": 2.860130193255762
+  }
+}
