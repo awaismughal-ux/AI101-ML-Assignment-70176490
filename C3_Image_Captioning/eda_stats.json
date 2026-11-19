@@ -1,0 +1,17 @@
+{
+  "train_images": 6000,
+  "dev_images": 1000,
+  "test_images": 1000,
+  "train_captions": 30000,
+  "mean_len": 10.79,
+  "median_len": 10.0,
+  "min_len": 2,
+  "max_len": 36,
+  "p95_len": 18.0,
+  "p99_len": 22.0,
+  "total_tokens": 323639,
+  "unique_words": 7630,
+  "min_freq_5_words": 2537,
+  "vocab_size": 2541,
+  "test_oov_rate": 3.14
+}
