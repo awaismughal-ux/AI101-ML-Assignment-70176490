@@ -7,8 +7,11 @@ __pycache__/
 
 # Ignore data folders except README.md
 data/*
+**/data/*
 !data/README.md
 !**/data/README.md
+__MACOSX/
+**/__MACOSX/
 
 # Large data formats
 *.csv
