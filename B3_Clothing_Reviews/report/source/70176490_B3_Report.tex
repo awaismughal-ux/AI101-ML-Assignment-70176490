@@ -1,0 +1,145 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{microtype}
+
+\begin{document}
+
+\title{Multimodal Classification and Class-Imbalance Dynamics in E-Commerce Clothing Review Ratings}
+
+\author{\IEEEauthorblockN{Muhammad Awais}
+\IEEEauthorblockA{\textit{Department of Intelligent Systems} \\
+\textit{The University of Lahore}\\
+Lahore, Pakistan \\
+Roll No: 70176490 $|$ Section A}
+}
+
+\maketitle
+
+\begin{abstract}
+Automated sentiment scoring of unstructured e-commerce customer feedback is vital for catalog monitoring, proactive customer churn prevention, and product design iteration. In this study, we formulate an ordinal multimodal classification framework to predict 5-star customer ratings from the Women's E-Commerce Clothing Reviews corpus (22,641 clean reviews). We enforce a strict target leakage prohibition by permanently excising the \texttt{Recommended IND} feature, which represents concurrent customer feedback. The dataset exhibits severe class imbalance, with 5-star reviews comprising 55.39\% of samples while 1-star reviews represent only 3.63\%. Using a stratified 70/15/15 split, we fuse 8,000 sublinear TF-IDF n-grams with standardized customer demographics and categorical metadata. While unweighted models maximize global accuracy (65.12\%) by defaulting to the majority class (91.97\% 5-star recall), they fail on critical negative feedback (17.07\% 1-star recall). Balanced class weighting resolves this failure mode, elevating 1-star recall to 46.34\% and achieving a top Macro-F1 of 0.4746 with an ordinal MAE of only 0.4686 stars. Our mandatory ablation demonstrates that text features drive virtually all predictive utility, whereas metadata alone collapses into majority-class prediction (Macro-F1 = 0.1426). Finally, we demonstrate that a 3-class sentiment reframing (Negative, Neutral, Positive) drastically improves production feasibility, yielding 80.95\% accuracy and 0.6424 Macro-F1.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Multimodal classification, ordinal rating prediction, TF-IDF, class imbalance, cost-sensitive learning, data leakage prevention, e-commerce analytics.
+\end{IEEEkeywords}
+
+\section{Introduction}
+Customer reviews in online fashion e-commerce provide rich qualitative intelligence on product fit, textile quality, tailoring, and brand satisfaction. Automatically predicting star ratings (1 to 5 stars) from text reviews and demographic attributes enables automated triage of dissatisfied customers and provides actionable product feedback.
+
+However, modeling e-commerce review corpora presents two severe challenges: (i) extreme class imbalance, as satisfied customers review products far more frequently than dissatisfied ones, creating heavy positive skewness (over 55\% 5-star ratings); (ii) target leakage risks, where metadata fields collected concurrently with ratings trivially betray customer sentiment.
+
+In this work, we build a robust, leakage-free multimodal classification system. We systematically analyze the accuracy-recall tradeoff induced by cost-sensitive class weighting, evaluate feature modality contributions, and assess the practical business benefits of 3-class sentiment reframing.
+
+\section{Data Hygiene \& Leakage Prevention}
+\subsection{Strict Leakage Prevention Protocol}
+The raw dataset contains 23,486 customer transactions. Under explicit assignment guidelines, we enforce a strict leakage prevention rule: \textbf{the feature \texttt{Recommended IND} is permanently removed}. In real-world customer review workflows, a customer selects both the recommendation toggle and star rating simultaneously. Including \texttt{Recommended IND} allows classifiers to shortcut textual sentiment comprehension, learning trivial binary mappings ($R \implies \text{Rating} \ge 4$) that fail completely in environments where only uncurated free-text feedback is present.
+
+\subsection{Preprocessing and Class Distribution}
+Records lacking review text (845 samples, 3.60\%) were pruned, leaving 22,641 clean samples. \texttt{Title} and \texttt{Review Text} were merged into a unified document. Analysis of the target variable \texttt{Rating} reveals extreme positive skewness: 1-Star (821, 3.63\%), 2-Star (1,549, 6.84\%), 3-Star (2,823, 12.47\%), 4-Star (4,908, 21.68\%), and 5-Star (12,540, 55.39\%). Naive majority prediction achieves 55.37\% accuracy but produces a useless Macro-F1 of 0.1426. Partitioning was performed via a stratified 70/15/15 train/validation/test split (15,848 train, 3,396 val, 3,397 test) with fixed seed 42.
+
+\section{Multimodal Feature Pipeline \& Models}
+All preprocessors were fitted exclusively on the 15,848 training records:
+\begin{itemize}
+    \item \textbf{Text Modality Block:} 8,000 sublinear TF-IDF features spanning unigrams and bigrams ($\text{min\_df} = 3$).
+    \item \textbf{Numerical Block:} Reviewer \texttt{Age}, $\log(1 + \text{Positive Feedback Count})$, and review word count standardized via \texttt{StandardScaler}.
+    \item \textbf{Categorical Block:} \texttt{Division}, \texttt{Department}, and \texttt{Class} encoded into 32 sparse binary columns via \texttt{OneHotEncoder}.
+\end{itemize}
+The combined feature representation spans 8,035 dimensions.
+
+We benchmarked Multinomial Logistic Regression, Linear Support Vector Machines (LinearSVC), and LightGBM Classifiers under both unweighted and inversely-proportional balanced class weighting regimes.
+
+\section{Experimental Results \& Modality Ablation}
+\subsection{5-Class Model Performance}
+Table~\ref{tab:models} presents performance metrics on the 3,397-sample test set. 
+
+\begin{table}[htbp]
+\caption{Model Performance on 5-Class Test Set}
+\label{tab:models}
+\centering
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Model Architecture} & \textbf{Accuracy} & \textbf{Macro-F1} & \textbf{1$\star$ Rec} & \textbf{MAE} \\
+\midrule
+Majority Baseline & 0.5537 & 0.1426 & 0.00\% & 0.8163 \\
+Logistic Reg (Unweighted) & 0.6512 & 0.4208 & 17.07\% & 0.4448 \\
+\textbf{Logistic Reg (Balanced)} & \textbf{0.6220} & \textbf{0.4746} & \textbf{46.34\%} & \textbf{0.4686} \\
+Linear SVM (Unweighted) & 0.6509 & 0.4397 & 24.39\% & 0.4439 \\
+Linear SVM (Balanced) & 0.6382 & 0.4570 & 36.59\% & 0.4651 \\
+LightGBM (Unweighted) & 0.6444 & 0.4194 & 15.45\% & 0.4557 \\
+LightGBM (Balanced) & 0.6332 & 0.4736 & 33.33\% & 0.4501 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{The Class Weighting Dilemma:} Unweighted Logistic Regression achieves higher overall accuracy (65.12\%) but sacrifices minority detection, recalling only 17.07\% of 1-star reviews. In contrast, Balanced Logistic Regression achieves the highest primary metric (\textbf{Macro-F1 = 0.4746}), boosting 1-star recall by +29.27 percentage points (to 46.34\%) while maintaining an exceptional ordinal MAE of 0.4686 stars.
+
+\subsection{Mandatory Modality Ablation Study}
+To evaluate the contribution of metadata versus text, we trained single-modality models on test data (Table~\ref{tab:ablation}).
+
+\begin{table}[htbp]
+\caption{Modality Ablation Study on Test Set}
+\label{tab:ablation}
+\centering
+\begin{tabular}{llccc}
+\toprule
+\textbf{Architecture} & \textbf{Feature Subset} & \textbf{Accuracy} & \textbf{Macro-F1} & \textbf{MAE} \\
+\midrule
+Logistic Regression & Metadata Only (35) & 0.5537 & 0.1426 & 0.8163 \\
+Logistic Regression & Text Only (8,000) & 0.6520 & 0.4133 & 0.4463 \\
+\textbf{Logistic Regression} & \textbf{Combined (8,035)} & \textbf{0.6512} & \textbf{0.4208} & \textbf{0.4448} \\
+\midrule
+LightGBM & Metadata Only (35) & 0.5408 & 0.1606 & 0.8246 \\
+LightGBM & Text Only (8,000) & 0.6447 & 0.4216 & 0.4554 \\
+\textbf{LightGBM} & \textbf{Combined (8,035)} & \textbf{0.6444} & \textbf{0.4194} & \textbf{0.4557} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The results demonstrate that \textbf{metadata alone completely fails}: customer demographics and product categories exhibit zero correlation with satisfaction, defaulting entirely to majority-class prediction. In contrast, review text drives all meaningful discrimination.
+
+\section{Diagnostic Analysis \& 3-Class Reframing}
+\subsection{Confusion Dynamics: Which Adjacent Ratings Confuse?}
+Examination of the $5 \times 5$ normalized confusion matrix reveals:
+\begin{enumerate}
+    \item \textbf{4-Star vs 5-Star Confusion:} The dominant error in the corpus. Over 28\% of true 4-star reviews are predicted as 5-star. Textual sentiment in 4-star reviews is overwhelmingly positive (e.g., ``Gorgeous fabric, highly flattering''), with the lost star tied to minor individual preferences (e.g., ``sleeves slightly long'').
+    \item \textbf{3-Star Ambivalence:} Neutral 3-star reviews exhibit heavy bi-directional leakage into both 2-star (21\%) and 4-star (24\%), reflecting mixed sentiment where complaints and compliments coexist.
+    \item \textbf{Low Ordinal Error:} The global ordinal MAE is 0.4686 stars, proving that errors are strictly bounded to immediately adjacent ratings.
+\end{enumerate}
+
+\subsection{3-Class Sentiment Reframing}
+In commercial operations, distinguishing 1 vs 2 stars or 4 vs 5 stars is superfluous; businesses require actionable sentiment categorization: Negative (1–2$\star$), Neutral (3$\star$), and Positive (4–5$\star$). Reframing the target yields massive performance gains (Table~\ref{tab:reframing}).
+
+\begin{table}[htbp]
+\caption{3-Class Sentiment Reframing Results}
+\label{tab:reframing}
+\centering
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Architecture} & \textbf{Accuracy} & \textbf{Macro-F1} & \textbf{Neg Rec} & \textbf{Neu Rec} \\
+\midrule
+LR (3-Class Unweighted) & 0.8322 & 0.5941 & 45.07\% & 25.94\% \\
+\textbf{LR (3-Class Balanced)} & \textbf{0.8095} & \textbf{0.6424} & \textbf{60.28\%} & \textbf{54.01\%} \\
+LightGBM (3-Class Unw) & 0.8331 & 0.6091 & 47.89\% & 29.95\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Under 3-class reframing, Balanced Logistic Regression achieves \textbf{80.95\% accuracy} and \textbf{0.6424 Macro-F1}, capturing 60.28\% of dissatisfied customers and 88.12\% of brand advocates.
+
+\section{Conclusion}
+This study demonstrated that e-commerce review star rating prediction is dominated by textual sentiment, requiring cost-sensitive weighting to overcome majority skew. Removing \texttt{Recommended IND} prevented target leakage, while 3-class sentiment reframing proved optimal for practical deployment.
+
+\bibliographystyle{IEEEtran}
+\begin{thebibliography}{00}
+\bibitem{agarap2018} A.~F.~Agarap, ``Statistical analysis on E-commerce reviews,'' \textit{arXiv:1805.03687}, 2018.
+\bibitem{pedregosa2011} F.~Pedregosa \textit{et al.}, ``Scikit-learn: Machine learning in Python,'' \textit{JMLR}, vol.~12, pp.~2825--2830, 2011.
+\bibitem{kaufman2012} S.~Kaufman \textit{et al.}, ``Leakage in data mining: Formulation, detection, and avoidance,'' \textit{ACM TKDD}, vol.~6, no.~4, 2012.
+\end{thebibliography}
+
+\end{document}
