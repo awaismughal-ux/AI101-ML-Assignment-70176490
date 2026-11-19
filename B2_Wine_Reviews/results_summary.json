@@ -1,0 +1,227 @@
+{
+  "task_id": "B2",
+  "title": "Predicting Wine Critic Scores from Tasting Notes and Metadata",
+  "dataset": "Wine Reviews (Winemag 130k v2)",
+  "raw_count": 129971,
+  "duplicates_dropped": 9983,
+  "clean_count": 119988,
+  "train_count": 95990,
+  "val_count": 11999,
+  "test_count": 11999,
+  "corr_price_points": 0.6169,
+  "corr_words_points": 0.5218,
+  "leakage_rows": 1802,
+  "leakage_pct": 13.86,
+  "models": {
+    "Baseline (Mean)": {
+      "val": {
+        "MAE": 2.525,
+        "RMSE": 3.0766,
+        "R2": -0.0005
+      },
+      "test": {
+        "MAE": 2.529,
+        "RMSE": 3.0923,
+        "R2": -0.0
+      }
+    },
+    "Ridge (Combined)": {
+      "val": {
+        "MAE": 1.1611,
+        "RMSE": 1.4787,
+        "R2": 0.7689
+      },
+      "test": {
+        "MAE": 1.1479,
+        "RMSE": 1.4699,
+        "R2": 0.7741
+      }
+    },
+    "Linear SVR (Combined)": {
+      "val": {
+        "MAE": 1.1788,
+        "RMSE": 1.5067,
+        "R2": 0.7601
+      },
+      "test": {
+        "MAE": 1.1652,
+        "RMSE": 1.4984,
+        "R2": 0.7652
+      }
+    },
+    "SGDRegressor (Combined)": {
+      "val": {
+        "MAE": 1.2544,
+        "RMSE": 1.6227,
+        "R2": 0.7217
+      },
+      "test": {
+        "MAE": 1.2338,
+        "RMSE": 1.5931,
+        "R2": 0.7346
+      }
+    },
+    "LightGBM (Combined)": {
+      "val": {
+        "MAE": 1.1624,
+        "RMSE": 1.4923,
+        "R2": 0.7646
+      },
+      "test": {
+        "MAE": 1.1525,
+        "RMSE": 1.4805,
+        "R2": 0.7708
+      }
+    }
+  },
+  "ablation": {
+    "Ridge (Metadata Only)": {
+      "MAE": 1.8261,
+      "RMSE": 2.3107,
+      "R2": 0.4416
+    },
+    "Ridge (Text Only)": {
+      "MAE": 1.3139,
+      "RMSE": 1.6656,
+      "R2": 0.7099
+    },
+    "Ridge (Combined)": {
+      "MAE": 1.1479,
+      "RMSE": 1.4699,
+      "R2": 0.7741
+    },
+    "LightGBM (Metadata Only)": {
+      "MAE": 1.7541,
+      "RMSE": 2.2286,
+      "R2": 0.4806
+    },
+    "LightGBM (Text Only)": {
+      "MAE": 1.3745,
+      "RMSE": 1.7512,
+      "R2": 0.6793
+    },
+    "LightGBM (Combined)": {
+      "MAE": 1.1525,
+      "RMSE": 1.4805,
+      "R2": 0.7708
+    }
+  },
+  "score_bands": {
+    "80\u201384": {
+      "count": 1216,
+      "pct": 10.13,
+      "mean_true": 83.14,
+      "mean_pred": 84.4,
+      "MAE": 1.5341,
+      "RMSE": 1.9205
+    },
+    "85\u201389": {
+      "count": 6248,
+      "pct": 52.07,
+      "mean_true": 87.15,
+      "mean_pred": 87.44,
+      "MAE": 1.0039,
+      "RMSE": 1.2731
+    },
+    "90\u201394": {
+      "count": 4299,
+      "pct": 35.83,
+      "mean_true": 91.42,
+      "mean_pred": 90.73,
+      "MAE": 1.201,
+      "RMSE": 1.5112
+    },
+    "95\u2013100": {
+      "count": 236,
+      "pct": 1.97,
+      "mean_true": 95.66,
+      "mean_pred": 93.9,
+      "MAE": 2.0021,
+      "RMSE": 2.5165
+    }
+  },
+  "top_positive_words": [
+    [
+      "gorgeous",
+      7.69796843409705
+    ],
+    [
+      "superb",
+      6.930055228385529
+    ],
+    [
+      "beautiful",
+      6.894376780993311
+    ],
+    [
+      "delicious",
+      6.782141998097933
+    ],
+    [
+      "complex",
+      6.450172597030779
+    ],
+    [
+      "stunning",
+      6.021238702115003
+    ],
+    [
+      "93",
+      5.96867939360305
+    ],
+    [
+      "years",
+      5.939770603613614
+    ],
+    [
+      "94",
+      5.712202976201332
+    ],
+    [
+      "beautifully",
+      5.693251488351021
+    ]
+  ],
+  "top_negative_words": [
+    [
+      "lacks",
+      -5.772038312401231
+    ],
+    [
+      "odd",
+      -5.162207397829274
+    ],
+    [
+      "sour",
+      -4.779851464356039
+    ],
+    [
+      "strange",
+      -4.412016505206723
+    ],
+    [
+      "vegetal",
+      -4.366722091260727
+    ],
+    [
+      "thin",
+      -4.3333377139489695
+    ],
+    [
+      "puckering",
+      -3.9936462866341116
+    ],
+    [
+      "volatile",
+      -3.8298984411799784
+    ],
+    [
+      "simple",
+      -3.7321536849975945
+    ],
+    [
+      "weak",
+      -3.688529256438032
+    ]
+  ]
+}
