@@ -7,6 +7,7 @@
 **Roll Number:** `70176490`  
 **Section:** Section A  
 **Degree Program:** Bachelor of Science in Embedded Systems & Artificial Intelligence (BS ESAI)  
+**Student Email:** `awaismughal12255@gmail.com`  
 **Repository URL:** [https://github.com/awaismughal-ux/AI101-ML-Assignment-70176490](https://github.com/awaismughal-ux/AI101-ML-Assignment-70176490)  
 **Submission Tag:** `submission`  
 
@@ -203,4 +204,5 @@ I hereby declare that this assignment is entirely my own original academic work.
 **Muhammad Awais**  
 Department of Intelligent Systems  
 The University of Lahore  
-Email: `muhammad.awais@is.uol.edu.pk`
+Student Email: `awaismughal12255@gmail.com`  
+Instructor: Dr. Muhammad Awais (`muhammad.awais@is.uol.edu.pk`)
